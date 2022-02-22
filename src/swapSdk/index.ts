@@ -1,5 +1,9 @@
 class SwapSdk {
 
+  public connectWallet() {
+
+  }
+
 }
 
 

@@ -21,7 +21,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'lib'),
     filename: "index.js",
-    library: 'wallets-manager',
+    library: 'OpenoceanApiSdk',
     libraryTarget: "umd"
   },
   module: {

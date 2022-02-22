@@ -2,7 +2,7 @@
   "name": "openocean-api-sdk",
   "version": "0.0.1",
   "description": "A multi-chain wallets manager",
-  "main": "src/index.ts",
+  "main": "lib/index.js",
   "scripts": {
     "build": "webpack",
     "build1": "tsc",

@@ -41,6 +41,7 @@
     "webpack-cli": "^4.6.0"
   },
   "dependencies": {
+    "@openocean.finance/wallet": "^0.1.8",
     "web3": "^1.7.0"
   }
 }

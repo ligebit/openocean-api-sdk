@@ -9,7 +9,9 @@
 </template>
 
 <script>
-import SwapSdk, { Api, units } from 'openocean-api-sdk';
+import { MetaMask, BscWallet } from "@openocean.finance/wallet";
+
+// import SwapSdk, { Api, units } from 'openocean-api-sdk';
 
 export default {
   name: 'App',
@@ -23,7 +25,10 @@ export default {
   },
   methods: {
     connectWallet () {
-      debugger
+      // let swapSdk = new SwapSdk()
+      // debugger
+      // swapSdk.connectWallet(1, new MetaMask())
+      // console.log(swapSdk)
     },
     quote () {
 
@@ -44,5 +49,7 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
 }
-button{ display: block;}
+button {
+  display: block;
+}
 </style>

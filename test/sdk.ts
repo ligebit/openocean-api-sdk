@@ -1,10 +1,11 @@
 
-import SwapSdk, { Api, units } from '../src/index';
-// import SwapSdk, { Api, units } from 'openocean-api-sdk';
+import SwapSdk, { Api, units, walletList } from '../src/index';
 
 async function init() {
-  let sdk = new SwapSdk()
-  console.log(sdk)
+  let swapSdk = new SwapSdk()
+
+  swapSdk.connectWallet(1, walletList[0])
+  console.log(swapSdk)
 }
 
 init()

@@ -12,10 +12,10 @@
 
 <script>
 // window.Buffer = Uint8Array;
-// import { MetaMask, BscWallet } from "@openocean.finance/wallet";
+import { MetaMask, BscWallet } from "@openocean.finance/wallet";
 // delete window.Buffer;
 
-import SwapSdk, { Api, units } from 'openocean-api-sdk';
+// import SwapSdk, { Api, units } from 'openocean-api-sdk';
 
 export default {
   name: 'App',
@@ -41,18 +41,18 @@ export default {
 
     },
     getBalance () {
-      const api = new Api()
-      api.getBalance({
-        account: '0x9548f567Aa2bf71a6691B634F9808346C804c0D0',
-        chainId: '1',
-        inTokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-      })
-        .then((data) => {
-          debugger
-        })
-        .catch((error) => {
-          debugger
-        });
+      // const api = new Api()
+      // api.getBalance({
+      //   account: '0x9548f567Aa2bf71a6691B634F9808346C804c0D0',
+      //   chainId: '1',
+      //   inTokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+      // })
+      //   .then((data) => {
+      //     debugger
+      //   })
+      //   .catch((error) => {
+      //     debugger
+      //   });
     }
   }
 }

@@ -1,11 +1,22 @@
 
-import SwapSdk, { Api, units, walletList } from '../src/index';
+import { Api } from '../src/index';
 
 async function init() {
-  let swapSdk = new SwapSdk()
+  let api = new Api()
+  try {
+    let sd = await api.getBalance({
+      account: '0x9548f567Aa2bf71a6691B634F9808346C804c0D0',
+      chainId: '1',
+      inTokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+    })
+    console.log(sd)
 
-  swapSdk.connectWallet(1, walletList[0])
-  console.log(swapSdk)
+  } catch (error) {
+    console.log('error')
+
+  }
+
 }
 
 init()
+

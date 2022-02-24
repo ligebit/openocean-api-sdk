@@ -1,15 +1,18 @@
 
-import { Api } from '../src/index';
+import OpenoceanApiSdk from '../src/index';
 
 async function init() {
-  let api = new Api()
+  let { api } = new OpenoceanApiSdk()
+
   try {
-    let sd = await api.getBalance({
+
+    api.approve({
       account: '0x9548f567Aa2bf71a6691B634F9808346C804c0D0',
       chainId: '1',
       inTokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+    }).on('error', (data: string) => {
+      console.log(data)
     })
-    console.log(sd)
 
   } catch (error) {
     console.log('error')

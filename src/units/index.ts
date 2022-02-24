@@ -1,11 +1,10 @@
 
 
-class Unit {
+export class Units {
 
 }
 
 
-export default new Unit()
 
 
 

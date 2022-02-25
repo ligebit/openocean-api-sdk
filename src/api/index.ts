@@ -4,16 +4,47 @@ import { validate } from 'class-validator'
 import { plainToClass } from 'class-transformer'
 
 
-import { Approve, ReqAllowanceVo } from "./vo/Approve";
-import { ReqBanlanceVo } from "./vo/Balance";
-
+import { Approve } from "./vo/Approve";
+import { ReqBanlanceVo, ReqAllowanceVo, ReqTokenPriceVo,ReqTokenInfoVo } from "./vo/RequestVo";
 
 export class Api {
-  public URL: string = 'https://open-api.openocean.finance'
+  public UrlOpenApi: string = 'https://open-api.openocean.finance'
+  public UrlCoingecKo: string = 'https://api.coingecko.com'
 
 
-  private async _validate(vo: any, option: any) {
-    const reqAllowanceVo = plainToClass(vo, option)
+  public async getBalance(option: ReqBanlanceVo): Promise<any> {
+    return this._get(`${this.UrlOpenApi}/v1/cross/getBalance`, option, ReqBanlanceVo)
+  }
+
+  public getAllowance(option: ReqAllowanceVo) {
+    return this._get(`${this.UrlOpenApi}/v1/cross/getAllowance`, option, ReqAllowanceVo)
+  }
+
+  public approve(params: object) {
+    let sd = new Approve(params)
+    let b = sd.send()
+
+    setTimeout(() => {
+      if (sd.errorCallback) sd.errorCallback(b)
+    }, 100);
+    return sd
+  }
+
+  public quote() {
+
+  }
+  public swap() {
+
+  }
+  public getTokenPrice(option: ReqTokenPriceVo) {
+    return this._get(`${this.UrlCoingecKo}/api/v3/simple/price`, option, ReqTokenPriceVo)
+  }
+  public getTokenInfo(option: ReqTokenInfoVo) {
+    return this._get(`${this.UrlCoingecKo}/api/v3/coins/${option.id}/contract/${option.contract_address}`, option, ReqTokenInfoVo)
+  }
+
+  private async _validate<T>(option: T, vo: any) {
+    const reqAllowanceVo = plainToClass<Object, Object>(vo, option)
     let errors = await validate(reqAllowanceVo)
     if (errors.length) {
       return errors.reduce((o: any[], n: any): string[] => {
@@ -25,10 +56,10 @@ export class Api {
     }
     return
   }
-  private async _get(url: string, option: any, vo: any): Promise<any> {
+  private async _get<T, V>(url: string, option: T, vo: V): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        const errors = await this._validate(vo, option)
+        const errors = await this._validate<T>(option, vo)
         if (errors) {
           reject({
             code: 400,
@@ -37,7 +68,7 @@ export class Api {
         } else {
           axios({
             method: 'get',
-            url: `${this.URL}${url}`,
+            url: `${url}`,
             params: option
           })
             .then((response: any) => {
@@ -54,37 +85,6 @@ export class Api {
         });
       }
     })
-  }
-
-  public async getBalance(option: ReqBanlanceVo): Promise<any> {
-    return this._get('/v1/cross/getBalance', option, ReqBanlanceVo)
-  }
-
-  public getAllowance(option: ReqAllowanceVo) {
-    return this._get('/v1/cross/getAllowance', option, ReqAllowanceVo)
-  }
-
-  public approve(params: object) {
-    let sd = new Approve(params)
-    let b = sd.send()
-
-    setTimeout(() => {
-      if (sd.errorCallback) sd.errorCallback(b)
-    }, 100);
-    return sd
-  }
-  public quote() {
-
-  }
-  public swap() {
-
-  }
-  public getTokenPrice() {
-
-
-  }
-  public getTokeninfo() {
-
   }
 }
 

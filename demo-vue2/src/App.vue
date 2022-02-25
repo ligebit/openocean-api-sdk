@@ -4,6 +4,8 @@
 
     <button @click="getBalance">getBalance</button>
     <button @click="getAllowance">getAllowance</button>
+    <button @click="getTokenPrice">getTokenPrice</button>
+    <button @click="getTokenInfo">getTokenInfo</button>
 
     <button @click="connectWallet">连接钱包</button>
     <button @click="quote">报价quote</button>
@@ -17,10 +19,10 @@
 // console.log(web3)
 
 
-import {OpenoceanApiSdk} from 'openocean-api-sdk';
-const api = new OpenoceanApiSdk()
-
-debugger
+import { OpenoceanApiSdk } from 'openocean-api-sdk';
+const openoceanApiSdk = new OpenoceanApiSdk()
+const { api } = openoceanApiSdk
+// debugger
 export default {
   name: 'App',
   components: {
@@ -59,10 +61,10 @@ export default {
     },
     getAllowance () {
       api.getAllowance({
-        account: '0x9548f567Aa2bf71a6691B634F9808346C804c0D0',
-        chainId: '1',
-        inTokenAddress: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-        contractAddress: '0xa0x8e8bd01b5A9eb272CC3892a2E40E64A716aa2A400b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
+        account: '0xf8953d8671644348303cfa8Ae408F5d9fb884761',
+        chainId: '56',
+        inTokenAddress: '0x9029FdFAe9A03135846381c7cE16595C3554e10A,0x08ba0619b1e7a582e0bce5bbe9843322c954c340',
+        contractAddress: '0x6352a56caadC4F1E25CD6c75970Fa768A3304e64'
       })
         .then((data) => {
           debugger
@@ -70,7 +72,35 @@ export default {
         .catch((error) => {
           debugger
         });
-    }
+    },
+    getTokenPrice () {
+      api.getTokenPrice(
+        {
+          ids: 'bitcoin',
+          vs_currencies: 'usd'
+        }
+      )
+        .then((data) => {
+          debugger
+        })
+        .catch((error) => {
+          debugger
+        });
+    },
+    getTokenInfo () {
+      api.getTokenInfo(
+        {
+          id: 'binance-smart-chain',
+          contract_address: '0x9029FdFAe9A03135846381c7cE16595C3554e10A'
+        }
+      )
+        .then((data) => {
+          debugger
+        })
+        .catch((error) => {
+          debugger
+        });
+    },
   }
 }
 

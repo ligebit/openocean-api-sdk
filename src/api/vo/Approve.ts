@@ -1,27 +1,8 @@
 
 import 'reflect-metadata'
-import { ArrayMinSize, IsDate, IsNotEmpty } from 'class-validator'
+import { MinLength, Length, IsNotEmpty } from 'class-validator'
 import { Type } from 'class-transformer'
-import {ReqBase} from './Base'
-
-
-export class ReqAllowanceVo extends ReqBase{
-
-  @IsNotEmpty({ message: 'Token addresses cannot be empty' })
-  @Type(() => String)
-  public inTokenAddress: string
-
-  @IsNotEmpty({ message: 'Account cannot be empty' })
-  @Type(() => String)
-  public account: string
-
-  @IsNotEmpty({ message: 'Contract addresses cannot be empty' })
-  @Type(() => String)
-  public contractAddress: string
-
-}
-
-
+import { ReqBase } from './RequestVo'
 
 export class Approve {
   params: any

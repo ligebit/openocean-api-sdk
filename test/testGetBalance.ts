@@ -1,5 +1,5 @@
 
-import OpenoceanApiSdk from '../src/index';
+import { OpenoceanApiSdk } from '../src/index';
 
 async function init() {
   let { api } = new OpenoceanApiSdk()

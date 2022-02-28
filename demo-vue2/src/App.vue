@@ -22,9 +22,9 @@
     <div class="chainBox" v-for="(item,i) in chainList" :key='i' style="">
       <div class="h1">{{item.chainName}} ({{item.key}})</div>
       <div style="padding-left:20px">
-        <div @click="connectWallet(obj,item.key)" class="item" v-for="(obj,j) in item.wallets" :key="j">
+        <span @click="connectWallet(obj,item.key)" class="item" v-for="(obj,j) in item.wallets" :key="j">
           {{obj}}
-        </div>
+        </span>
       </div>
     </div>
   </div>
@@ -67,7 +67,6 @@ export default {
       })
       if (data.code == 200) {
         let sdd = this.target = data.target
-        debugger
       } else {
         this.message = data.message
       }
@@ -263,6 +262,11 @@ export default {
 }
 .chainBox .item {
   cursor: pointer;
+  margin: 6px;
+  display: inline-block;
+  border: 1px solid #ededed;
+  border-radius: 4px;
+  padding: 2px 5px;
 }
 .chainBox .item:hover {
   color: blue;

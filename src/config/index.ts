@@ -1,16 +1,14 @@
 
+import { wallets, Wallets } from "./Wallets";
+import { chains, Chains } from "./Chains";
 
-interface ChainConfig {
-  tokens: any
+export interface Config {
+  chains: Chains,
+  wallets: Wallets,
 }
 
-interface Config {
-  boba: ChainConfig
-}
-const config: Config = {
-  boba: {
-    tokens: require('./../asset/boba/boba_tokens.ts').default
-  }
-}
 
-export default config
+export const config: Config = {
+  chains: chains,
+  wallets: wallets,
+}

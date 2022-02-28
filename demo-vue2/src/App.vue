@@ -6,11 +6,27 @@
     <button @click="getAllowance">getAllowance</button>
     <button @click="getTokenPrice">getTokenPrice</button>
     <button @click="getTokenInfo">getTokenInfo</button>
+    <button @click="getTokenList">getTokenList</button>
+    <button @click="createWallet">createWallet</button>
+    <button @click="getTransaction">getTransaction</button>
 
-    <button @click="connectWallet">连接钱包</button>
-    <button @click="quote">报价quote</button>
-    <div class="">{{ quoteValue }}</div>
-    <button @click="swap">交易swap</button>
+    <button @click="getGasPrice">getGasPrice</button>
+    <button @click="quote">quote</button>
+    <button @click="swap">swap</button>
+    <button @click="transfer">transfer</button>
+
+    <button @click="connectWallet('MetaMask','eth')">connectWallet</button>
+
+    <div style="color:red;height:40px">{{message}}</div>
+    <div v-if="target" style="color:blue">chainId:{{target.chainId}} walletName:{{target.name}}</div>
+    <div class="chainBox" v-for="(item,i) in chainList" :key='i' style="">
+      <div class="h1">{{item.chainName}} ({{item.key}})</div>
+      <div style="padding-left:20px">
+        <div @click="connectWallet(obj,item.key)" class="item" v-for="(obj,j) in item.wallets" :key="j">
+          {{obj}}
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -21,8 +37,8 @@
 
 import { OpenoceanApiSdk } from 'openocean-api-sdk';
 const openoceanApiSdk = new OpenoceanApiSdk()
-const { api } = openoceanApiSdk
-// debugger
+const { api, swapSdk, config } = openoceanApiSdk
+
 export default {
   name: 'App',
   components: {
@@ -30,21 +46,31 @@ export default {
   data () {
     return {
       address: null,
-      quoteValue: null
+      quoteValue: null,
+      target: {
+        chainId: '',
+        name: ''
+      },
+      message: null,
+
+      walletObj: config.wallets.walletObj,
+      chainList: config.chains.chainList
+
     }
   },
   methods: {
-    connectWallet () {
-      // let swapSdk = new SwapSdk()
-      // debugger
-      // swapSdk.connectWallet(1, new MetaMask())
-      // console.log(swapSdk)
-    },
-    quote () {
-
-    },
-    swap () {
-
+    async connectWallet (walletName, chainName) {
+      this.message = null
+      let data = await swapSdk.connectWallet({
+        chainName: chainName,
+        walletName: walletName
+      })
+      if (data.code == 200) {
+        let sdd = this.target = data.target
+        debugger
+      } else {
+        this.message = data.message
+      }
     },
     getBalance () {
       api.getBalance({
@@ -101,6 +127,114 @@ export default {
           debugger
         });
     },
+    getGasPrice () {
+      api.getGasPrice({
+        chainId: '56',
+      })
+        .then((data) => {
+          debugger
+        })
+        .catch((error) => {
+          debugger
+        });
+    },
+    getTokenList () {
+      api.getTokenList({
+        chainId: '56',
+      })
+        .then((data) => {
+          debugger
+        })
+        .catch((error) => {
+          debugger
+        });
+    },
+    getTransaction () {
+      api.getTransaction({
+        exChange: 'openoceanv2',
+        chainId: '56',
+        hash: '0x98250e03ed1b61d4d2857758fa597511a84225c6229b20a1349382b5541b5461',
+        type: 'transfer'
+      })
+        .then((data) => {
+          debugger
+        })
+        .catch((error) => {
+          debugger
+        });
+    },
+
+    async quote () {
+      let req = await api.getGasPrice({
+        chainId: '56',
+      })
+      api.quote({
+        exChange: 'openoceanv2',
+        chainId: '56',
+        inTokenAddress: '0x9029FdFAe9A03135846381c7cE16595C3554e10A',
+        outTokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+        amount: 1,
+        gasPrice: req.data.gasPrice,
+        slippage: 1
+      })
+        .then((data) => {
+          debugger
+        })
+        .catch((error) => {
+          debugger
+        });
+    },
+    async swap () {
+      let req = await api.getGasPrice({
+        chainId: '56',
+      })
+      api.swap({
+        exChange: 'openoceanv2',
+        chainId: '56',
+        inTokenAddress: '0x9029FdFAe9A03135846381c7cE16595C3554e10A',
+        outTokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+        amount: 1,
+        gasPrice: req.data.gasPrice,
+        slippage: 1,
+        account: '0x9548f567Aa2bf71a6691B634F9808346C804c0D0'
+      })
+        .then((data) => {
+          debugger
+        })
+        .catch((error) => {
+          debugger
+        });
+    },
+    createWallet () {
+      api.createWallet({
+        chainId: '56',
+      })
+        .then((data) => {
+          debugger
+        })
+        .catch((error) => {
+          debugger
+        });
+    },
+    async transfer () {
+      let req = await api.getGasPrice({
+        chainId: '56',
+      })
+      api.transfer({
+        chainId: '56',
+        inTokenAddress: '0x9029FdFAe9A03135846381c7cE16595C3554e10A',
+        amount: 1,
+        gasPrice: req.data.gasPrice,
+        decimals: 18,
+        targetAddress: '0x929B44e589AC4dD99c0282614e9a844Ea9483C69'
+      })
+        .then((data) => {
+          debugger
+        })
+        .catch((error) => {
+          debugger
+        });
+    }
   }
 }
 
@@ -114,13 +248,23 @@ export default {
 // }
 </script>
 
-<style>
+<style sty>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+.chainBox {
+}
+.chainBox .h1 {
+  font-weight: bold;
+}
+.chainBox .item {
+  cursor: pointer;
+}
+.chainBox .item:hover {
+  color: blue;
 }
 </style>

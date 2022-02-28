@@ -1,19 +1,15 @@
 
 import { Api } from './api';
-import { Units } from './units';
-import SwapSdk from './swapSdk';
-import Web3 from 'web3';
-
-const web3 = new Web3()
-const units = new Units()
-
+import { Utils, utils } from './utils';
+import { Web3, web3 } from './utils/web3';
+import { SwapSdk } from './swapSdk';
+import { config, Config } from './config';
 
 export class OpenoceanApiSdk {
   api: Api = new Api()
-  SwapSdk: SwapSdk = new SwapSdk()
+  swapSdk: SwapSdk = new SwapSdk()
   web3: Web3 = web3
-  units: Units = units
-
+  utils: Utils = utils
+  config: Config = config
 }
 
-// export OpenoceanApiSdk

@@ -1,15 +1,19 @@
 import { Approve } from "./vo/Approve";
-import { ReqBanlanceVo, ReqAllowanceVo, ReqTokenPriceVo, ReqTokenInfoVo } from "./vo/RequestVo";
+import { ReqtransferVo, ReqTransactionReceiptVo, ReqBase, ReqTransactionVo, ReqSwapVo, ReqBanlanceVo, ReqAllowanceVo, ReqTokenPriceVo, ReqTokenInfoVo, ReqQuoteVo } from "./vo/RequestVo";
 export declare class Api {
     UrlOpenApi: string;
     UrlCoingecKo: string;
+    approve(params: object): Approve;
     getBalance(option: ReqBanlanceVo): Promise<any>;
     getAllowance(option: ReqAllowanceVo): Promise<any>;
-    approve(params: object): Approve;
-    quote(): void;
-    swap(): void;
+    getGasPrice(option: ReqBase): Promise<any>;
+    quote(option: ReqQuoteVo): Promise<any>;
+    swap(option: ReqSwapVo): Promise<any>;
+    getTokenList(option: ReqBase): Promise<any>;
+    createWallet(option: ReqBase): Promise<any>;
+    getTransaction(option: ReqTransactionVo): Promise<any>;
+    getTransactionReceipt(option: ReqTransactionReceiptVo): Promise<any>;
+    transfer(option: ReqtransferVo): Promise<any>;
     getTokenPrice(option: ReqTokenPriceVo): Promise<any>;
     getTokenInfo(option: ReqTokenInfoVo): Promise<any>;
-    private _validate;
-    private _get;
 }

@@ -19,10 +19,9 @@ export declare enum WalletNames {
     'TerraStation' = 17,
     'CoinbaseWallet' = 18
 }
-declare class Wallets {
+export declare class Wallets {
     walletObj: any;
     walletList: any[];
     constructor();
 }
 export declare const wallets: Wallets;
-export {};

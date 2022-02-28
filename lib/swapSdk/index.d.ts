@@ -1,5 +1,14 @@
-import { BaseWallet } from './wallets';
+import { ReqConnectWalletVo } from "./RequestVo";
 declare class SwapSdk {
-    connectWallet(chainId: number, walletObj: BaseWallet): void;
+    constructor();
+    connectWallet(reqConnectWalletVo: ReqConnectWalletVo): Promise<{
+        code: number;
+        target: any;
+        message?: undefined;
+    } | {
+        code: number;
+        message: any;
+        target?: undefined;
+    }>;
 }
-export default SwapSdk;
+export { SwapSdk };

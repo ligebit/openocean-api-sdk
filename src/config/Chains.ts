@@ -11,6 +11,26 @@ let chainObj: any = {
       "https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"
     ]
   },
+  "ropsten": {
+    chainName: "Ethereum Ropsten",
+    chainId: 3,
+    blockExplorerUrl: "https://ropsten.etherscan.io/",
+    nativeCurrency: { name: "ETH", symbol: "eth", decimals: 18, address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE" },
+    popularToken: ["ETH", "USDT", "USDC", "BUSD", "UNI", "C98", "LINK", "MATIC"],
+    rpcUrls: [
+      "https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"
+    ]
+  },
+  "rinkeby": {
+    chainName: "Ethereum Rinkeby",
+    chainId: 4,
+    blockExplorerUrl: "https://rinkeby.etherscan.io/",
+    nativeCurrency: { name: "ETH", symbol: "eth", decimals: 18, address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE" },
+    popularToken: ["ETH", "USDT", "USDC", "BUSD", "UNI", "C98", "LINK", "MATIC"],
+    rpcUrls: [
+      "https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"
+    ]
+  },
   "bsc": {
     chainName: "Binance Smart Chain", chainId: 56, blockExplorerUrl: "https://bscscan.com/tx/",
     popularToken: ["OOE", "BNB", "USDT", "BUSD", "CAKE", "C98", "BAKE", "MBOX"],
@@ -36,11 +56,25 @@ let chainObj: any = {
 }
 // console.log(JSON.stringify(Object.keys(chainObj).map((key: string) => key)))
 export enum ChainNames {
-  "eth", "bsc", "solana", "polygon", "avax", "fantom", "arbitrum", "terra", "xdai", "boba", "ont", "tron", "heco", "okex", "optimism", "harmony", "dot", "neo"
+  "eth", "rinkeby", "bsc", "solana", "polygon", "avax", "fantom", "arbitrum", "terra", "xdai", "boba", "ont", "tron", "heco", "okex", "optimism", "harmony", "dot", "neo"
 }
 
 export class Chains {
   ethereumChainParams: any = {
+    // rinkeby: [
+    //   {
+    //     chainId: `0x4`, // 4
+    //     chainName: "rinkeby",
+    //     key: 'rinkeby',
+    //     nativeCurrency: {
+    //       name: "ETH",
+    //       symbol: "eth",
+    //       decimals: 18,
+    //     },
+    //     rpcUrls: ["https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"],
+    //     blockExplorerUrls: ["https://rinkeby.etherscan.io"],
+    //   },
+    // ],
     bsc: [
       {
         chainId: `0x38`, // 56
@@ -204,9 +238,10 @@ export class Chains {
   constructor() {
     wallets.walletList.forEach((item: any) => {
       item.supportChains.forEach((chainName: string) => {
-        if (chainObj[chainName].wallets) {
+        if (chainObj[chainName] && chainObj[chainName].wallets) {
           chainObj[chainName].wallets.push(item.key)
         } else {
+          console.log(chainName)
           chainObj[chainName].key = chainName
           chainObj[chainName].wallets = [item.key]
         }

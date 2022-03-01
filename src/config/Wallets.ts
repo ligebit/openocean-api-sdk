@@ -67,9 +67,12 @@ const WalletObj: any = {
   CoinbaseWallet: new CoinbaseWallet(),
 };
 export class Wallets {
-  walletObj: any = WalletObj
+  walletObj: any = {}
   walletList: any[] = []
   constructor() {
+    WalletObj.MetaMask.supportChains.push('rinkeby')
+    WalletObj.MetaMask.supportChains.push('ropsten')
+    this.walletObj = WalletObj
     this.walletList = Object.keys(WalletObj).map((key: string) => {
       WalletObj[key].key = key
       return WalletObj[key]

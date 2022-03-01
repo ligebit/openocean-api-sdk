@@ -2,43 +2,13 @@ import 'reflect-metadata'
 import { MinLength, IsEnum, Length, IsIn, IsNotEmpty, IsBoolean } from 'class-validator'
 import { Type } from 'class-transformer'
 
-const ChainIds: String[] = ['1', '56', '100', '137', '250', '42161', '43114']
+const ChainIds: String[] = ['1', '3', '4', '56', '100', '137', '250', '42161', '43114']
 export class ReqBase {
 
   @IsNotEmpty({ message: 'ChainId addresses cannot be empty' })
   @IsIn(ChainIds, { message: 'Chain id in(1/56/100/137/250/42161/43114)' })
   @Type(() => String)
   public chainId: string
-
-}
-
-export class ReqApproveVo extends ReqBase {
-  @IsNotEmpty({ message: 'Account cannot be empty' })
-  @Length(30, 60, { message: 'Account length error' })
-  @Type(() => String)
-  public account: string
-
-  @IsNotEmpty({ message: 'Token addresses cannot be empty' })
-  @MinLength(30, { message: 'Token addresses length error' })
-  @Type(() => String)
-  public inTokenAddress: string
-
-  @IsNotEmpty({ message: 'Contract addresses cannot be empty' })
-  @MinLength(30, { message: 'Contract addresses length error' })
-  @Type(() => String)
-  public contractAddress: string
-
-  @IsNotEmpty({ message: 'Amount cannot be empty' })
-  @Type(() => Number)
-  public amount: Number
-
-  @IsNotEmpty({ message: 'GasPrice cannot be empty' })
-  @Type(() => Number)
-  public gasPrice: Number
-
-  @IsNotEmpty({ message: 'String cannot be empty' })
-  @Type(() => String)
-  public walletName: String
 
 }
 
@@ -136,8 +106,6 @@ export class ReqQuoteVo extends ReqBase {
   public withRoute: String
 
 }
-
-
 export class ReqSwapVo extends ReqBase {
   @IsNotEmpty({ message: 'ExChange cannot be empty' })
   @IsEnum(ExChanges, { message: 'ExChange in(openoceanv1/openoceanv2/1inch/matcha/paraswap)' })

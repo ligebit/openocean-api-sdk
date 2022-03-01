@@ -4,8 +4,8 @@ import { Web3 } from './utils/web3';
 import { SwapSdk } from './swapSdk';
 import { Config } from './config';
 export declare class OpenoceanApiSdk {
-    api: Api;
     swapSdk: SwapSdk;
+    api: Api;
     web3: Web3;
     utils: Utils;
     config: Config;

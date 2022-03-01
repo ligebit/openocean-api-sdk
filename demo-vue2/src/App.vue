@@ -15,7 +15,8 @@
     <button @click="swap">swap</button>
     <button @click="transfer">transfer</button>
 
-    <button @click="connectWallet('MetaMask','eth')">connectWallet</button>
+    <button @click="connectWallet('MetaMask','rinkeby')">connectWallet</button>
+    <button @click="approve()">approve</button>
 
     <div style="color:red;height:40px">{{message}}</div>
     <div v-if="target" style="color:blue">chainId:{{target.chainId}} walletName:{{target.name}}</div>
@@ -31,9 +32,6 @@
 </template>
 
 <script>
-// import web3 from 'web3';
-// console.log(web3)
-
 
 import { OpenoceanApiSdk } from 'openocean-api-sdk';
 const openoceanApiSdk = new OpenoceanApiSdk()
@@ -52,10 +50,8 @@ export default {
         name: ''
       },
       message: null,
-
       walletObj: config.wallets.walletObj,
       chainList: config.chains.chainList
-
     }
   },
   methods: {
@@ -70,6 +66,66 @@ export default {
       } else {
         this.message = data.message
       }
+    },
+    async approve () {
+      // let req = await api.getGasPrice({
+      //   chainId: '4',
+      // })
+      // debugger
+      let approve = await swapSdk.approve({
+        chainId: '4',
+        tokenAddress: '0x01BE23585060835E02B77ef475b0Cc51aA1e0709',
+        contractAddress: '0x40d3b2f06f198d2b789b823cdbecd1db78090d74',
+        amount: 2 * (10 ** 18),
+        // gasPrice: req.data.gasPrice,
+      })
+      if (!approve.code) {
+        approve.on('error', (error) => {
+          debugger
+        })
+          .on('transactionHash', (hash) => {
+            debugger
+          })
+          .on('receipt', (data) => {
+            debugger
+          })
+          .on('success', (data) => {
+            debugger
+          })
+      } else {
+        this.message = approve.message
+        debugger
+      }
+
+    },
+    async swap () {
+      let req = await api.getGasPrice({
+        chainId: '56',
+      })
+      let swap = swapSdk.swap({
+        exChange: 'openoceanv2',
+        chainId: '56',
+        inTokenAddress: '0x55d398326f99059ff775485246999027b3197955',
+        outTokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+        amount: '7300000000',
+        gasPrice: req.data.gasPrice,
+        slippage: 1,
+        account: '0x9548f567Aa2bf71a6691B634F9808346C804c0D0'
+      })
+        .on('error', (error) => {
+          debugger
+        })
+        .on('transactionHash', (hash) => {
+          debugger
+        })
+        .on('receipt', (data) => {
+          debugger
+        })
+        .on('success', (data) => {
+          debugger
+        })
+      debugger
+
     },
     getBalance () {
       api.getBalance({
@@ -162,7 +218,6 @@ export default {
           debugger
         });
     },
-
     async quote () {
       let req = await api.getGasPrice({
         chainId: '56',
@@ -183,27 +238,7 @@ export default {
           debugger
         });
     },
-    async swap () {
-      let req = await api.getGasPrice({
-        chainId: '56',
-      })
-      api.swap({
-        exChange: 'openoceanv2',
-        chainId: '56',
-        inTokenAddress: '0x9029FdFAe9A03135846381c7cE16595C3554e10A',
-        outTokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-        amount: 1,
-        gasPrice: req.data.gasPrice,
-        slippage: 1,
-        account: '0x9548f567Aa2bf71a6691B634F9808346C804c0D0'
-      })
-        .then((data) => {
-          debugger
-        })
-        .catch((error) => {
-          debugger
-        });
-    },
+
     createWallet () {
       api.createWallet({
         chainId: '56',
@@ -267,6 +302,8 @@ export default {
   border: 1px solid #ededed;
   border-radius: 4px;
   padding: 2px 5px;
+  font-size: 12px;
+  color: #000;
 }
 .chainBox .item:hover {
   color: blue;

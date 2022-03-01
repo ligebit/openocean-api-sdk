@@ -2,14 +2,6 @@ import 'reflect-metadata';
 export declare class ReqBase {
     chainId: string;
 }
-export declare class ReqApproveVo extends ReqBase {
-    account: string;
-    inTokenAddress: string;
-    contractAddress: string;
-    amount: Number;
-    gasPrice: Number;
-    walletName: String;
-}
 export declare class ReqBanlanceVo extends ReqBase {
     account: string;
     inTokenAddress: string;

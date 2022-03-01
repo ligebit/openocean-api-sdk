@@ -1,9 +1,7 @@
-import { Approve } from "./vo/Approve";
 import { ReqtransferVo, ReqTransactionReceiptVo, ReqBase, ReqTransactionVo, ReqSwapVo, ReqBanlanceVo, ReqAllowanceVo, ReqTokenPriceVo, ReqTokenInfoVo, ReqQuoteVo } from "./vo/RequestVo";
 export declare class Api {
     UrlOpenApi: string;
     UrlCoingecKo: string;
-    approve(params: object): Approve;
     getBalance(option: ReqBanlanceVo): Promise<any>;
     getAllowance(option: ReqAllowanceVo): Promise<any>;
     getGasPrice(option: ReqBase): Promise<any>;
@@ -17,3 +15,4 @@ export declare class Api {
     getTokenPrice(option: ReqTokenPriceVo): Promise<any>;
     getTokenInfo(option: ReqTokenInfoVo): Promise<any>;
 }
+export declare let api: Api;

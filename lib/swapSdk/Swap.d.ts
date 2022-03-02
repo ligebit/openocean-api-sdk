@@ -7,7 +7,10 @@ export declare class Swap {
     private successCallback;
     contract: any;
     option: ReqSwapVo;
+    res: any;
+    target: any;
     constructor(option: ReqSwapVo);
-    send(): Promise<void>;
+    send(target: any): Promise<this>;
+    sendEthTransaction(): Promise<void>;
     on(events: string, callback: Function): this;
 }

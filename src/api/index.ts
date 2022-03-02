@@ -23,7 +23,7 @@ export class Api {
   }
 
   public swap(option: ReqSwapVo) {
-    return get(`${this.UrlOpenApi}/v1/cross/swap`, option, ReqSwapVo)
+    return get(`${this.UrlOpenApi}/v1/cross/swap_quote`, option, ReqSwapVo)
   }
 
   public getTokenList(option: ReqBase) {

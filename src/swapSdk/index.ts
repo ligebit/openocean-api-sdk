@@ -2,31 +2,45 @@
 import { ReqConnectWalletVo, ReqApproveVo } from "./RequestVo";
 import { validateReq } from "../utils/ajx";
 import { utils } from "../utils";
-
-import { wallets } from "../config/Wallets";
-import { chains } from "../config/Chains";
+import { ConnectWallet } from "./ConnectWallet";
 import { Approve } from "./Approve";
 import { ERC20_abi } from "../config";
 import { Swap, ReqSwapVo } from "./Swap";
 
-
 class SwapSdk {
-
-  target: any;
-  constructor() { }
-  swap(option: ReqSwapVo) {
-    let swap = new Swap(option)
-    swap.send()
-    return swap
+  i: number = 0;
+  wallet: any;
+  constructor() {
+    let data = localStorage.getItem('opencean_link_obj')
+    if (data) {
+      this.connectWallet(JSON.parse(data))
+    }
   }
-  public async approve(reqApproveVo: ReqApproveVo) {
-    if (!this.target) {
+  public swap(reqSwapVo: ReqSwapVo) {
+    if (!this.wallet) {
       return {
         code: 400,
         message: 'No linked wallet'
       }
     }
-    if (this.target && this.target.chainId != reqApproveVo.chainId) {
+    if (this.wallet && this.wallet.chainId != reqSwapVo.chainId) {
+      return {
+        code: 400,
+        message: 'Network error'
+      }
+    }
+    let swap = new Swap(reqSwapVo)
+    swap.send(this.wallet)
+    return swap
+  }
+  public async approve(reqApproveVo: ReqApproveVo) {
+    if (!this.wallet) {
+      return {
+        code: 400,
+        message: 'No linked wallet'
+      }
+    }
+    if (this.wallet && this.wallet.chainId != reqApproveVo.chainId) {
       return {
         code: 400,
         message: 'Network error'
@@ -42,7 +56,7 @@ class SwapSdk {
     }
 
     if (!reqApproveVo.tokenAbi) reqApproveVo.tokenAbi = ERC20_abi
-    const contract = new this.target.sdk.eth.Contract(reqApproveVo.tokenAbi, reqApproveVo.tokenAddress);
+    const contract = new this.wallet.sdk.eth.Contract(reqApproveVo.tokenAbi, reqApproveVo.tokenAddress);
     if (!contract || !contract.methods || !contract.methods.approve) {
       return {
         code: 400,
@@ -50,11 +64,16 @@ class SwapSdk {
       }
     }
     let approve = new Approve(contract)
-    approve.send(reqApproveVo, this.target.address)
+    approve.send(reqApproveVo, this.wallet.address)
     return approve
   }
-
   public async connectWallet(reqConnectWalletVo: ReqConnectWalletVo) {
+    if (this.wallet && this.wallet.key == reqConnectWalletVo.walletName && this.wallet.chainName == reqConnectWalletVo.chainName) {
+      return {
+        code: 200,
+        wallet: this.wallet
+      }
+    }
     const errors = await validateReq(reqConnectWalletVo, ReqConnectWalletVo)
     if (errors) {
       return {
@@ -62,76 +81,19 @@ class SwapSdk {
         message: errors
       }
     } else {
-      let target = wallets.walletObj[reqConnectWalletVo.walletName]
-      const chain: any = chains.chainObj[reqConnectWalletVo.chainName]
-      const chainId: string = chain.chainId
-      try {
-        chainId ? await target.requestConnect(chainId) : await target.requestConnect();
-        this.target = { ...target }
-        return {
-          code: 200,
-          target: this.target
-        }
-      } catch (e: any) {
-        const { message } = e;
-        const { currentProvider, utils: utilsSkd } = target.sdk || {};
-        if (message === "40006" && currentProvider) {
-          const params = chains.ethereumChainParams[chain.key];
-          if (params) {
-            await currentProvider.request({
-              method: "wallet_addEthereumChain",
-              params
-            })
-            await utils.sleep(1500)
-            if (utilsSkd.toHex(chainId) == target.sdk.currentProvider.chainId) {
-              target.chainId = chainId
-              this.target = { ...target }
-              return {
-                code: 200,
-                target: this.target
-              }
-            } else {
-              return {
-                code: 401,
-                message: 'User rejected the request.'
-              }
-            }
-          } else if (chainId == '1' || chainId == '3' || chainId == '4') {
-            try {
-              await currentProvider.request({
-                method: 'wallet_switchEthereumChain',
-                params: [{
-                  chainId: utilsSkd.toHex(chainId)
-                }],
-              });
-              target.chainId = chainId
-              this.target = { ...target }
-              return {
-                code: 200,
-                target: this.target
-              }
-            } catch (error: any) {
-              return {
-                code: 401,
-                message: error.message
-              }
-            }
-          } else {
-            return {
-              code: 500,
-              message: 'Network error'
-            }
-          }
-        } else {
-          return {
-            code: 500,
-            message: /^\d+$/.test(message) ? "wallet_message_" + message : message
-          }
-        }
-      }
+      let data = await ConnectWallet.link(reqConnectWalletVo)
+      if (data.code == 200) this.wallet = data.wallet
+      return data
     }
   }
-
+  public async getWallet() {
+    if (this.wallet) return this.wallet
+    await utils.sleep(1000)
+    if (this.wallet) return this.wallet
+    await utils.sleep(1000)
+    if (this.wallet) return this.wallet
+    return
+  }
 }
 
 export { SwapSdk } 

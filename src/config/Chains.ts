@@ -56,7 +56,7 @@ let chainObj: any = {
 }
 // console.log(JSON.stringify(Object.keys(chainObj).map((key: string) => key)))
 export enum ChainNames {
-  "eth", "rinkeby", "bsc", "solana", "polygon", "avax", "fantom", "arbitrum", "terra", "xdai", "boba", "ont", "tron", "heco", "okex", "optimism", "harmony", "dot", "neo"
+  "eth", "rinkeby","ropsten", "bsc", "solana", "polygon", "avax", "fantom", "arbitrum", "terra", "xdai", "boba", "ont", "tron", "heco", "okex", "optimism", "harmony", "dot", "neo"
 }
 
 export class Chains {
@@ -241,7 +241,7 @@ export class Chains {
         if (chainObj[chainName] && chainObj[chainName].wallets) {
           chainObj[chainName].wallets.push(item.key)
         } else {
-          console.log(chainName)
+          // console.log(chainName)
           chainObj[chainName].key = chainName
           chainObj[chainName].wallets = [item.key]
         }
@@ -249,6 +249,9 @@ export class Chains {
     })
     this.chainObj = chainObj
     this.chainList = Object.keys(chainObj).map((key: string) => chainObj[key])
+  }
+  isNativeToken(chainName: string, address: string) {
+    return this.chainObj[chainName] ? this.chainObj[chainName].nativeCurrency.address === address : false
   }
 }
 export const chains = new Chains()

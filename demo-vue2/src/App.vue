@@ -15,11 +15,11 @@
     <button @click="swap">swap</button>
     <button @click="transfer">transfer</button>
 
-    <button @click="connectWallet('MetaMask','rinkeby')">connectWallet</button>
+    <button @click="connectWallet('MetaMask','ropsten')">connectWallet</button>
     <button @click="approve()">approve</button>
 
     <div style="color:red;height:40px">{{message}}</div>
-    <div v-if="target" style="color:blue">chainId:{{target.chainId}} walletName:{{target.name}}</div>
+    <div v-if="wallet" style="color:blue">chainId:{{wallet.chainId}} walletName:{{wallet.name}}  address:{{wallet.address}}</div>
     <div class="chainBox" v-for="(item,i) in chainList" :key='i' style="">
       <div class="h1">{{item.chainName}} ({{item.key}})</div>
       <div style="padding-left:20px">
@@ -45,7 +45,7 @@ export default {
     return {
       address: null,
       quoteValue: null,
-      target: {
+      wallet: {
         chainId: '',
         name: ''
       },
@@ -53,6 +53,9 @@ export default {
       walletObj: config.wallets.walletObj,
       chainList: config.chains.chainList
     }
+  },
+  async created () {
+    this.wallet = await swapSdk.getWallet()
   },
   methods: {
     async connectWallet (walletName, chainName) {
@@ -62,7 +65,7 @@ export default {
         walletName: walletName
       })
       if (data.code == 200) {
-        let sdd = this.target = data.target
+        let sdd = this.wallet = swapSdk.wallet
       } else {
         this.message = data.message
       }
@@ -98,33 +101,61 @@ export default {
       }
 
     },
-    async swap () {
+    async quote () {
       let req = await api.getGasPrice({
         chainId: '56',
       })
-      let swap = swapSdk.swap({
+      api.quote({
         exChange: 'openoceanv2',
         chainId: '56',
         inTokenAddress: '0x55d398326f99059ff775485246999027b3197955',
         outTokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-        amount: '7300000000',
+        amount: '7',
         gasPrice: req.data.gasPrice,
-        slippage: 1,
-        account: '0x9548f567Aa2bf71a6691B634F9808346C804c0D0'
+        slippage: 100,
       })
-        .on('error', (error) => {
+        .then((data) => {
           debugger
         })
-        .on('transactionHash', (hash) => {
+        .catch((error) => {
+          debugger
+        });
+    },
+    async swap () {
+      let req = await api.getGasPrice({
+        chainId: '56',
+      })
+      let swapObj = swapSdk.swap({
+        exChange: 'openoceanv2',
+        chainId: '56',
+        inTokenAddress: '0x55d398326f99059ff775485246999027b3197955',
+        outTokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+        // inTokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+        // outTokenAddress: '0x55d398326f99059ff775485246999027b3197955',
+        amount: '1',
+        gasPrice: req.data.gasPrice,
+        slippage: 100,
+        account: '0x9548f567Aa2bf71a6691B634F9808346C804c0D0',
+        // in_token_decimals: 18,
+        // out_token_decimals: 9,
+      })
+      if (!swapObj.code) {
+        swapObj.on('error', (error) => {
           debugger
         })
-        .on('receipt', (data) => {
-          debugger
-        })
-        .on('success', (data) => {
-          debugger
-        })
-      debugger
+          .on('transactionHash', (hash) => {
+            debugger
+          })
+          .on('receipt', (data) => {
+            debugger
+          })
+          .on('success', (data) => {
+            debugger
+          })
+      } else {
+        this.message = swapObj.message
+        debugger
+      }
 
     },
     getBalance () {
@@ -218,26 +249,7 @@ export default {
           debugger
         });
     },
-    async quote () {
-      let req = await api.getGasPrice({
-        chainId: '56',
-      })
-      api.quote({
-        exChange: 'openoceanv2',
-        chainId: '56',
-        inTokenAddress: '0x9029FdFAe9A03135846381c7cE16595C3554e10A',
-        outTokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-        amount: 1,
-        gasPrice: req.data.gasPrice,
-        slippage: 1
-      })
-        .then((data) => {
-          debugger
-        })
-        .catch((error) => {
-          debugger
-        });
-    },
+
 
     createWallet () {
       api.createWallet({
@@ -260,7 +272,7 @@ export default {
         amount: 1,
         gasPrice: req.data.gasPrice,
         decimals: 18,
-        targetAddress: '0x929B44e589AC4dD99c0282614e9a844Ea9483C69'
+        walletAddress: '0x929B44e589AC4dD99c0282614e9a844Ea9483C69'
       })
         .then((data) => {
           debugger

@@ -33,10 +33,11 @@
 
 <script>
 
-import { OpenoceanApiSdk } from 'openocean-api-sdk';
+import { OpenoceanApiSdk } from '@openocean.finance/api';
+// import { OpenoceanApiSdk } from 'openocean-api-sdk';
+
 const openoceanApiSdk = new OpenoceanApiSdk()
 const { api, swapSdk, config } = openoceanApiSdk
-
 export default {
   name: 'App',
   components: {
@@ -128,11 +129,11 @@ export default {
       let swapObj = swapSdk.swap({
         exChange: 'openoceanv2',
         chainId: '56',
-        inTokenAddress: '0x55d398326f99059ff775485246999027b3197955',
-        outTokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-        // inTokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-        // outTokenAddress: '0x55d398326f99059ff775485246999027b3197955',
-        amount: '1',
+        // inTokenAddress: '0x55d398326f99059ff775485246999027b3197955',
+        // outTokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+        inTokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+        outTokenAddress: '0x55d398326f99059ff775485246999027b3197955',
+        amount: '0.1',
         gasPrice: req.data.gasPrice,
         slippage: 100,
         account: '0x9548f567Aa2bf71a6691B634F9808346C804c0D0',

@@ -1,3 +1,8 @@
+## 包地址
+https://www.npmjs.com/package/@openocean.finance/api
+
+npm i @openocean.finance/api
+
 ## 本地 link
 1. 在openocean-api-sdk项目下：npm link
 2. 在需要使用的项目里面：npm link openocean-api-sdk

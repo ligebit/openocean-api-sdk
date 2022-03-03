@@ -1,7 +1,7 @@
 {
-  "name": "openocean-api-sdk",
+  "name": "@openocean.finance/api",
   "version": "0.0.1",
-  "description": "A multi-chain wallets manager",
+  "description": "OpenOcean API SDK",
   "main": "lib/index.js",
   "scripts": {
     "build": "tsc",
@@ -19,7 +19,8 @@
   ],
   "keywords": [
     "multi-chain",
-    "wallets"
+    "api",
+    "sdk"
   ],
   "homepage": "",
   "devDependencies": {

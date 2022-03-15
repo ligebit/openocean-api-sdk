@@ -1,18 +1,11 @@
 import { MinLength, IsEnum, Length, IsIn, IsNotEmpty, IsBoolean } from 'class-validator'
 import { Type } from 'class-transformer'
-
 import { WalletNames } from "../config/Wallets";
-import { ChainNames } from "../config/Chains";
+import { chains } from "../config/Chains";
+import { ChainName } from "../api/vo/RequestVo";
 
-import { ReqBase } from "../api/vo/RequestVo";
 
-
-export class ReqConnectWalletVo {
-  @IsNotEmpty({ message: 'Chain name cannot be empty' })
-  @IsEnum(ChainNames, { message: 'Chain name error' })
-  @Type(() => String)
-  public chainName: string
-
+export class ReqConnectWalletVo extends ChainName  {
   @IsNotEmpty({ message: 'Wallet name cannot be empty' })
   @IsEnum(WalletNames, { message: 'Wallet name error' })
   @Type(() => String)
@@ -20,7 +13,7 @@ export class ReqConnectWalletVo {
 }
 
 
-export class ReqApproveVo extends ReqBase {
+export class ReqApproveVo extends ChainName {
 
   @IsNotEmpty({ message: 'Token addresses cannot be empty' })
   @MinLength(30, { message: 'Token addresses length error' })

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div>{{address}}</div>
+    <div style="height: 50px;">{{address}}</div>
 
     <button @click="getBalance">getBalance</button>
     <button @click="getAllowance">getAllowance</button>
@@ -11,15 +11,38 @@
     <button @click="getTransaction">getTransaction</button>
 
     <button @click="getGasPrice">getGasPrice</button>
-    <button @click="quote">quote</button>
-    <button @click="swap">swap</button>
-    <button @click="transfer">transfer</button>
+    <div>
+      <h2>Ropsten</h2>
+      <button @click="connectWallet('MetaMask','ropsten')">connectWallet ropsten</button>
+      <button @click="approve()">approve ropsten</button>
+    </div>
+    <div>
+      <h2>Bsc</h2>
+      <button @click="connectWallet('MetaMask','bsc')">connectWallet</button>
+      <button @click="quoteBsc">quoteBsc</button>
+      <button @click="swapBsc">swapBsc</button>
+      <button @click="transfer">transfer</button>
+    </div>
+    <div>
+      <h2>Solana</h2>
+      <button @click="connectWallet('Phantom','solana')">connectWallet</button>
+      <button @click="quoteSolana">quoteSolana</button>
+      <button @click="swapSolana">swapSolana</button>
+    </div>
 
-    <button @click="connectWallet('MetaMask','ropsten')">connectWallet</button>
-    <button @click="approve()">approve</button>
+    <div>
+      <h2>Tron</h2>
+      <button @click="connectWallet('TronLink','tron')">connectWallet</button>
+      <button @click="quoteTron">quoteTron</button>
+      <button @click="swapTron">swapTron</button>
+    </div>
 
     <div style="color:red;height:40px">{{message}}</div>
-    <div v-if="wallet" style="color:blue">chainId:{{wallet.chainId}} walletName:{{wallet.name}} address:{{wallet.address}}</div>
+    <div v-if="wallet" style="color:blue">
+      <div>chain:{{chain.chainName}}</div>
+      <div> walletName:{{wallet.name}}</div>
+      <div>address:{{wallet.address}}</div>
+    </div>
     <div class="chainBox" v-for="(item,i) in chainList" :key='i' style="">
       <div class="h1">{{item.chainName}} ({{item.key}})</div>
       <div style="padding-left:20px">
@@ -46,9 +69,10 @@ export default {
       address: null,
       quoteValue: null,
       wallet: {
-        chainId: '',
+        chain: '',
         name: ''
       },
+      chain: {},
       message: null,
       walletObj: config.wallets.walletObj,
       chainList: config.chains.chainList
@@ -56,27 +80,29 @@ export default {
   },
   async created () {
     this.wallet = await swapSdk.getWallet()
+    this.chain = await swapSdk.getChain()
   },
   methods: {
-    async connectWallet (walletName, chainName) {
+    async connectWallet (walletName, chain) {
       this.message = null
       let data = await swapSdk.connectWallet({
-        chainName: chainName,
+        chain: chain,
         walletName: walletName
       })
       if (data.code == 200) {
-        let sdd = this.wallet = swapSdk.wallet
+        this.wallet = swapSdk.wallet
+        this.chain = swapSdk.chain
       } else {
         this.message = data.message
       }
     },
     async approve () {
       // let req = await api.getGasPrice({
-      //   chainId: '4',
+      //   chain: 'ropsten',
       // })
       // debugger
       let approve = await swapSdk.approve({
-        chainId: '4',
+        chain: 'ropsten',
         tokenAddress: '0x01BE23585060835E02B77ef475b0Cc51aA1e0709',
         contractAddress: '0x40d3b2f06f198d2b789b823cdbecd1db78090d74',
         amount: 2 * (10 ** 18),
@@ -101,12 +127,107 @@ export default {
       }
 
     },
-    async quote () {
+    async quoteTron () {
+      let req = await api.getGasPrice({
+        chain: 'tron',
+      })
+      api.quote({
+        chain: 'tron',
+        inTokenAddress: 'T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb',
+        outTokenAddress: 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t',
+        amount: 1,
+        gasPrice: req.data.gasPrice,
+        slippage: 1,
+      })
+        .then((data) => {
+          debugger
+        })
+        .catch((error) => {
+          debugger
+        });
+    },
+    async swapTron () {
+      let req = await api.getGasPrice({
+        chain: 'tron',
+      })
+      let swapObj = swapSdk.swap({
+        chain: 'tron',
+        inTokenAddress: 'T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb',
+        outTokenAddress: 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t',
+        amount: 0.001,
+        slippage: 1,
+        account: 'TPyNMWvKsmyYpuM4NdKiK58DCvDNHQsPWG',
+        gasPrice: req.data.gasPrice,
+      })
+      if (!swapObj.code) {
+        swapObj.on('error', (error) => {
+          debugger
+        })
+          .on('transactionHash', (hash) => {
+            debugger
+          })
+          .on('receipt', (data) => {
+            debugger
+          })
+          .on('success', (data) => {
+            debugger
+          })
+      } else {
+        this.message = swapObj.message
+        debugger
+      }
+
+    },
+    async quoteSolana () {
+      api.quote({
+        chain: 'solana',
+        inTokenAddress: 'So11111111111111111111111111111111111111112',
+        outTokenAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+        amount: 1,
+        // gasPrice: req.data.gasPrice,
+        slippage: 1,
+      })
+        .then((data) => {
+          debugger
+        })
+        .catch((error) => {
+          debugger
+        });
+    },
+    async swapSolana () {
+      let swapObj = swapSdk.swap({
+        chain: 'solana',
+        inTokenAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+        outTokenAddress: 'So11111111111111111111111111111111111111112',
+        amount: 0.001,
+        slippage: 1,
+        account: '5LVT5qWEFNxJD1yz3guroQQ6x1LaeU1vdnYn59q5hihW',
+        // gasPrice: 7,
+      })
+      if (!swapObj.code) {
+        swapObj.on('error', (error) => {
+          debugger
+        })
+          .on('transactionHash', (hash) => {
+            debugger
+          })
+          .on('receipt', (data) => {
+            debugger
+          })
+          .on('success', (data) => {
+            debugger
+          })
+      } else {
+        this.message = swapObj.message
+        debugger
+      }
+
+    },
+    async quoteBsc () {
       let req = await api.getGasPrice({
         chain: 'bsc',
       })
       api.quote({
-        exChange: 'openoceanv2',
         chain: 'bsc',
         inTokenAddress: '0x55d398326f99059ff775485246999027b3197955',
         outTokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
@@ -121,13 +242,12 @@ export default {
           debugger
         });
     },
-    async swap () {
+    async swapBsc () {
       let req = await api.getGasPrice({
-        chainId: 'bsc',
+        chain: 'bsc',
       })
       let swapObj = swapSdk.swap({
-        exChange: 'openoceanv2',
-        chainId: 'bsc',
+        chain: 'bsc',
         // inTokenAddress: '0x55d398326f99059ff775485246999027b3197955',
         // outTokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
         inTokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
@@ -234,10 +354,9 @@ export default {
           debugger
         });
     },
-    getTransaction () {
+    getTransaction (chain) {
       api.getTransaction({
-        exChange: 'openoceanv2',
-        chain: 'BSC',
+        chain: chain,
         hash: '0x98250e03ed1b61d4d2857758fa597511a84225c6229b20a1349382b5541b5461',
         type: 'transfer'
       })

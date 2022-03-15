@@ -6,7 +6,7 @@ export const ERC20_abi = [{ "constant": true, "inputs": [], "name": "name", "out
 export interface Config {
   chains: Chains,
   wallets: Wallets,
-  ERC20_abi: any
+  ERC20_abi: any,
 }
 
 

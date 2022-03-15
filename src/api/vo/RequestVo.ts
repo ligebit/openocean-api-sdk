@@ -1,14 +1,13 @@
 import 'reflect-metadata'
 import { MinLength, IsEnum, Length, IsIn, IsNotEmpty, IsBoolean } from 'class-validator'
 import { Type } from 'class-transformer'
+import { chains } from "../../config/Chains";
 
-const ChainIds: String[] = ['1', '3', '4', '56', '100', '137', '250', '42161', '43114']
-const ChainNames: String[] = ['bsc', 'eth', 'polygon', 'ftm', 'avax', 'heco', 'okex', 'xdai', 'arbitrum', 'optimism', 'moonriver', 'boba', 'ont', 'tron', 'solana', 'terra']
 
 export class ReqBase {
 
   @IsNotEmpty({ message: 'ChainId addresses cannot be empty' })
-  @IsIn(ChainIds, { message: 'Chain id in(31/56/100/137/250/42161/43114)' })
+  @IsIn(chains.chainIds, { message: 'Chain id in(31/56/100/137/250/42161/43114)' })
   @Type(() => String)
   public chainId: string
 
@@ -17,7 +16,7 @@ export class ReqBase {
 export class ChainName {
 
   @IsNotEmpty({ message: 'Chain addresses cannot be empty' })
-  @IsIn(ChainNames, { message: `Chain in()` })
+  @IsIn(chains.chainNames, { message: `Chain in()` })
   @Type(() => String)
   public chain: string
 
@@ -80,13 +79,8 @@ export class ReqTokenInfoVo {
 
 }
 
-enum ExChanges { 'openoceanv1', 'openoceanv2', '1inch', 'matcha', 'paraswap' }
 export class ReqQuoteVo extends ChainName {
-  @IsNotEmpty({ message: 'ExChange cannot be empty' })
-  @IsEnum(ExChanges, { message: 'ExChange in(openoceanv1/openoceanv2/1inch/matcha/paraswap)' })
-  @Type(() => String)
-  public exChange: string | 'openoceanv2'
-
+  
   @IsNotEmpty({ message: 'In Token address cannot be empty' })
   @Type(() => String)
   public inTokenAddress: string
@@ -98,30 +92,16 @@ export class ReqQuoteVo extends ChainName {
   @IsNotEmpty({ message: 'Amount cannot be empty' })
   @Type(() => Number)
   public amount: Number
-
-  @IsNotEmpty({ message: 'GasPrice cannot be empty' })
-  @Type(() => Number)
-  public gasPrice: Number
 
   @IsNotEmpty({ message: 'Slippage cannot be empty' })
   @Type(() => Number)
   public slippage: Number
 
-  @Type(() => Number)
-  public in_token_decimals: Number
-
-  @Type(() => Number)
-  public out_token_decimals: Number
-
   @Type(() => String)
-  public withRoute: String
+  public gasPrice: String
 
 }
 export class ReqSwapVo extends ChainName {
-  @IsNotEmpty({ message: 'ExChange cannot be empty' })
-  @IsEnum(ExChanges, { message: 'ExChange in(openoceanv1/openoceanv2/1inch/matcha/paraswap)' })
-  @Type(() => String)
-  public exChange: string | 'openoceanv2'
 
   @IsNotEmpty({ message: 'In Token address cannot be empty' })
   @Type(() => String)
@@ -134,10 +114,6 @@ export class ReqSwapVo extends ChainName {
   @IsNotEmpty({ message: 'Amount cannot be empty' })
   @Type(() => Number)
   public amount: Number
-
-  @IsNotEmpty({ message: 'GasPrice cannot be empty' })
-  @Type(() => Number)
-  public gasPrice: Number
 
   @IsNotEmpty({ message: 'Slippage cannot be empty' })
   @Type(() => Number)
@@ -148,26 +124,13 @@ export class ReqSwapVo extends ChainName {
   public account: String
 
   @Type(() => String)
-  public referrer: String
-
-  @Type(() => Number)
-  public in_token_decimals: Number
-
-  @Type(() => Number)
-  public out_token_decimals: Number
-
-  @Type(() => Boolean)
-  public withoutCheckBalance: Boolean
+  public gasPrice: String
 
 }
 
 
 enum TransactionType { 'transfer', 'swap' }
 export class ReqTransactionReceiptVo extends ChainName {
-  @IsNotEmpty({ message: 'ExChange cannot be empty' })
-  @IsEnum(ExChanges, { message: 'ExChange id in(openoceanv1/openoceanv2/1inch/matcha/paraswap)' })
-  @Type(() => String)
-  public exChange: string | 'openoceanv2'
 
   @IsNotEmpty({ message: 'Hash cannot be empty' })
   @Type(() => String)
@@ -181,8 +144,6 @@ export class ReqTransactionVo extends ReqTransactionReceiptVo {
   public type: string
 
 }
-
-
 
 export class ReqtransferVo extends ChainName {
   @IsNotEmpty({ message: 'In Token address cannot be empty' })

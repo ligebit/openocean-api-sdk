@@ -9,7 +9,8 @@ let chainObj: any = {
     popularToken: ["ETH", "USDT", "USDC", "BUSD", "UNI", "C98", "LINK", "MATIC"],
     rpcUrls: [
       "https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"
-    ]
+    ],
+    compiler: 'EVM'
   },
   "ropsten": {
     chainName: "Ethereum Ropsten",
@@ -19,7 +20,9 @@ let chainObj: any = {
     popularToken: ["ETH", "USDT", "USDC", "BUSD", "UNI", "C98", "LINK", "MATIC"],
     rpcUrls: [
       "https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"
-    ]
+    ],
+    compiler: 'EVM',
+    isTest: true
   },
   "rinkeby": {
     chainName: "Ethereum Rinkeby",
@@ -29,34 +32,61 @@ let chainObj: any = {
     popularToken: ["ETH", "USDT", "USDC", "BUSD", "UNI", "C98", "LINK", "MATIC"],
     rpcUrls: [
       "https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"
-    ]
+    ],
+    compiler: 'EVM',
+    isTest: true
   },
   "bsc": {
     chainName: "Binance Smart Chain", chainId: 56, blockExplorerUrl: "https://bscscan.com/tx/",
     popularToken: ["OOE", "BNB", "USDT", "BUSD", "CAKE", "C98", "BAKE", "MBOX"],
     nativeCurrency: { name: "BNB", symbol: "bnb", decimals: 18, address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE" },
-    rpcUrls: ["https://bsc-dataseed1.binance.org/"]
+    rpcUrls: ["https://bsc-dataseed1.binance.org/"],
+    compiler: 'EVM',
+
   },
-  "solana": { chainName: "Solana Mainnet", blockExplorerUrl: "https://solscan.io/tx/", popularToken: ["SOL", "SNY", "USDT", "USDC", "RAY", "STEP"], rpcUrls: null },
-  "polygon": { chainName: "Polygon Mainnet", chainId: 137, blockExplorerUrl: "https://polygonscan.com/tx/", popularToken: ["OOE", "USDT", "USDC", "MATIC", "AAVE", "DINO", "ADDY", "MIMATIC"], nativeCurrency: { name: "MATIC", symbol: "matic", decimals: 18, address: "0x0000000000000000000000000000000000001010" }, rpcUrls: ["https://rpc-mainnet.maticvigil.com"] },
-  "avax": { chainName: "Avalanche", chainId: 43114, blockExplorerUrl: "https://cchain.explorer.avax.network/tx/", popularToken: ["OOE", "AVAX", "PNG", "DAI.E", "ETH", "WAVAX", "JOE", "QI", "USDC.E"], nativeCurrency: { name: "AVAX", symbol: "avax", decimals: 18, address: "0x0000000000000000000000000000000000000000" }, rpcUrls: ["https://api.avax.network/ext/bc/C/rpc"] },
+  "solana": {
+    compiler: 'SOL',
+    chainName: "Solana Mainnet", blockExplorerUrl: "https://solscan.io/tx/", popularToken: ["SOL", "SNY", "USDT", "USDC", "RAY", "STEP"], rpcUrls: null
+  },
+  "polygon": {
+    compiler: 'EVM',
+    chainName: "Polygon Mainnet", chainId: 137, blockExplorerUrl: "https://polygonscan.com/tx/", popularToken: ["OOE", "USDT", "USDC", "MATIC", "AAVE", "DINO", "ADDY", "MIMATIC"], nativeCurrency: { name: "MATIC", symbol: "matic", decimals: 18, address: "0x0000000000000000000000000000000000001010" }, rpcUrls: ["https://rpc-mainnet.maticvigil.com"]
+  },
+  "avax": {
+    compiler: 'EVM',
+    chainName: "Avalanche", chainId: 43114, blockExplorerUrl: "https://cchain.explorer.avax.network/tx/", popularToken: ["OOE", "AVAX", "PNG", "DAI.E", "ETH", "WAVAX", "JOE", "QI", "USDC.E"], nativeCurrency: { name: "AVAX", symbol: "avax", decimals: 18, address: "0x0000000000000000000000000000000000000000" }, rpcUrls: ["https://api.avax.network/ext/bc/C/rpc"]
+  },
   "fantom": { chainName: "Fantom", chainId: 250, blockExplorerUrl: "https://ftmscan.com/tx/", popularToken: ["OOE", "ETH", "USDT", "USDC", "SPIRIT", "1INCH", "C98", "FTM", "fUSDT", "MIM", "BOO"], nativeCurrency: { name: "FTM", symbol: "ftm", decimals: 18, address: "0x0000000000000000000000000000000000000000" }, rpcUrls: ["https://rpcapi.fantom.network"] },
-  "arbitrum": { chainName: "Arbitrum", chainId: 42161, blockExplorerUrl: "https://arbiscan.io/tx/", nativeCurrency: { name: "ETH", symbol: "eth", decimals: 18, address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE" }, rpcUrls: ["https://arb1.arbitrum.io/rpc"] },
+  "arbitrum": {
+    compiler: 'EVM',
+    chainName: "Arbitrum", chainId: 42161, blockExplorerUrl: "https://arbiscan.io/tx/", nativeCurrency: { name: "ETH", symbol: "eth", decimals: 18, address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE" }, rpcUrls: ["https://arb1.arbitrum.io/rpc"]
+  },
   "terra": { chainName: "Terra Mainnet", chainId: "columbus-5", blockExplorerUrl: "https://finder.terra.money/columbus-5/tx/", rpcUrls: null },
-  "xdai": { chainName: "Gnosis Mainnet", chainId: 100, blockExplorerUrl: "https://blockscout.com/poa/xdai/tx/", popularToken: ["OOE", "ETH", "USDT", "USDC", "BUSD", "1INCH", "C98"], nativeCurrency: { name: "xDai", symbol: "xdai", decimals: 18, address: "0x0000000000000000000000000000000000000000" }, rpcUrls: ["https://rpc.xdaichain.com/"] },
+  "xdai": {
+    compiler: 'EVM',
+    chainName: "Gnosis Mainnet", chainId: 100, blockExplorerUrl: "https://blockscout.com/poa/xdai/tx/", popularToken: ["OOE", "ETH", "USDT", "USDC", "BUSD", "1INCH", "C98"], nativeCurrency: { name: "xDai", symbol: "xdai", decimals: 18, address: "0x0000000000000000000000000000000000000000" }, rpcUrls: ["https://rpc.xdaichain.com/"]
+  },
   "boba": { chainName: "Boba Mainnet", chainId: 288, blockExplorerUrl: "https://blockexplorer.boba.network/tx/", nativeCurrency: { name: "ETH", symbol: "eth", decimals: 18, address: "0x0000000000000000000000000000000000000000" }, rpcUrls: ["https://mainnet.boba.network"] },
   "ont": { chainName: "Ontology Mainnet", blockExplorerUrl: "https://explorer.ont.io/transaction/", popularToken: [], rpcUrls: null },
   "tron": { chainName: "Tron Mainnet", blockExplorerUrl: "https://tronscan.io/#/transaction/", popularToken: ["TRX", "WTRX", "ETH", "BTC", "USDT", "USDJ", "JST"], rpcUrls: null },
-  "heco": { chainName: "Heco Mainnet", chainId: 128, blockExplorerUrl: "https://hecoinfo.com/tx/", popularToken: ["HT", "ETH", "AAVE", "USDT", "USDC", "MDX", "DEP"], nativeCurrency: { name: "HT", symbol: "ht", decimals: 18, address: "0x0000000000000000000000000000000000000000" }, rpcUrls: ["https://http-mainnet-node.huobichain.com"] },
-  "okex": { chainName: "OEC Mainnet", chainId: 66, blockExplorerUrl: "https://www.oklink.com/okexchain/", popularToken: ["OKT", "OKB", "USDT", "USDC", "BUSD", "BNB", "CHE"], nativeCurrency: { name: "OKT", symbol: "okt", decimals: 18, address: "0x0000000000000000000000000000000000000000" }, rpcUrls: ["https://exchainrpc.okex.org"] },
-  "optimism": { chainName: "Optimism", chainId: 10, blockExplorerUrl: "https://optimism.io/tx/", nativeCurrency: { name: "OETH", symbol: "oeth", decimals: 18, address: "0x0000000000000000000000000000000000000000" }, rpcUrls: ["https://mainnet.optimism.io"] },
-  "harmony": { chainName: "Harmony", blockExplorerUrl: "https://explorer.harmony.one/", popularToken: ["OOE", "ETH", "USDT", "USDC", "BUSD", "1INCH", "C98"] },
+  "heco": {
+    compiler: 'EVM',
+    chainName: "Heco Mainnet", chainId: 128, blockExplorerUrl: "https://hecoinfo.com/tx/", popularToken: ["HT", "ETH", "AAVE", "USDT", "USDC", "MDX", "DEP"], nativeCurrency: { name: "HT", symbol: "ht", decimals: 18, address: "0x0000000000000000000000000000000000000000" }, rpcUrls: ["https://http-mainnet-node.huobichain.com"]
+  },
+  "okex": {
+    compiler: 'EVM',
+    chainName: "OEC Mainnet", chainId: 66, blockExplorerUrl: "https://www.oklink.com/okexchain/", popularToken: ["OKT", "OKB", "USDT", "USDC", "BUSD", "BNB", "CHE"], nativeCurrency: { name: "OKT", symbol: "okt", decimals: 18, address: "0x0000000000000000000000000000000000000000" }, rpcUrls: ["https://exchainrpc.okex.org"]
+  },
+  "optimism": {
+    compiler: 'EVM',
+    chainName: "Optimism", chainId: 10, blockExplorerUrl: "https://optimism.io/tx/", nativeCurrency: { name: "OETH", symbol: "oeth", decimals: 18, address: "0x0000000000000000000000000000000000000000" }, rpcUrls: ["https://mainnet.optimism.io"]
+  },
+  "harmony": {
+    compiler: 'EVM',
+    chainName: "Harmony", blockExplorerUrl: "https://explorer.harmony.one/", popularToken: ["OOE", "ETH", "USDT", "USDC", "BUSD", "1INCH", "C98"]
+  },
   "dot": { chainName: "Polkadot", blockExplorerUrl: "", popularToken: ["OOE", "ETH", "USDT", "USDC", "BUSD", "1INCH", "C98"] },
   "neo": { chainName: "Neo", blockExplorerUrl: "", popularToken: ["OOE", "ETH", "USDT", "USDC", "BUSD", "1INCH", "C98"] }
-}
-// console.log(JSON.stringify(Object.keys(chainObj).map((key: string) => key)))
-export enum ChainNames {
-  "eth", "rinkeby","ropsten", "bsc", "solana", "polygon", "avax", "fantom", "arbitrum", "terra", "xdai", "boba", "ont", "tron", "heco", "okex", "optimism", "harmony", "dot", "neo"
 }
 
 export class Chains {
@@ -234,6 +264,8 @@ export class Chains {
   };
   chainObj: any = {}
   chainList: any[] = []
+  chainIds: String[] = []
+  chainNames: String[] = []
 
   constructor() {
     wallets.walletList.forEach((item: any) => {
@@ -241,17 +273,26 @@ export class Chains {
         if (chainObj[chainName] && chainObj[chainName].wallets) {
           chainObj[chainName].wallets.push(item.key)
         } else {
-          // console.log(chainName)
+          if (!chainObj[chainName]) {
+            chainObj[chainName] = {}
+          }
           chainObj[chainName].key = chainName
           chainObj[chainName].wallets = [item.key]
         }
       })
     })
     this.chainObj = chainObj
-    this.chainList = Object.keys(chainObj).map((key: string) => chainObj[key])
+    this.chainList = Object.keys(chainObj).map((key: string) => {
+      this.chainIds.push(chainObj[key].chainId)
+      this.chainNames.push(key)
+      return chainObj[key]
+    })
+    // console.log(JSON.stringify(this.chainList))
   }
   isNativeToken(chainName: string, address: string) {
     return this.chainObj[chainName] ? this.chainObj[chainName].nativeCurrency.address === address : false
   }
 }
-export const chains:Chains = new Chains()
+export const chains: Chains = new Chains()
+
+

@@ -8,9 +8,11 @@ export declare class Swap {
     contract: any;
     option: ReqSwapVo;
     res: any;
-    target: any;
+    wallet: any;
+    chain: any;
     constructor(option: ReqSwapVo);
-    send(target: any): Promise<this>;
+    send(wallet: any, chain: any): Promise<this>;
+    sendSolanaTransaction(): Promise<void>;
     sendEthTransaction(): Promise<void>;
     on(events: string, callback: Function): this;
 }

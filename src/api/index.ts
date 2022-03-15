@@ -2,7 +2,7 @@
 
 import { get } from "../utils/ajx";
 import { config } from "../config";
-import { ReqtransferVo, ReqTransactionReceiptVo, ReqBase, ReqTransactionVo, ReqSwapVo, ReqBanlanceVo, ReqAllowanceVo, ReqTokenPriceVo, ReqTokenInfoVo, ReqQuoteVo } from "./vo/RequestVo";
+import { ReqtransferVo, ReqTransactionReceiptVo, ChainName, ReqTransactionVo, ReqSwapVo, ReqBanlanceVo, ReqAllowanceVo, ReqTokenPriceVo, ReqTokenInfoVo, ReqQuoteVo } from "./vo/RequestVo";
 
 export class Api {
   public UrlOpenApi: string = 'https://open-api.openocean.finance'
@@ -19,26 +19,28 @@ export class Api {
   }
 
   @setChainId
-  public getGasPrice(option: ReqBase) {
-    return get(`${this.UrlOpenApi}/v1/${option.chainId}/getGasPrice`, option, ReqBase)
+  public getGasPrice(option: any) {
+    return get(`${this.UrlOpenApi}/v1/${option.chainId}/getGasPrice`, option, ChainName)
   }
 
+  @setChainId
   public quote(option: ReqQuoteVo) {
-    console.log(option)
     return get(`${this.UrlOpenApi}/v3/${option.chain}/quote`, option, ReqQuoteVo)
   }
 
+  @setChainId
   public swap(option: ReqSwapVo) {
     return get(`${this.UrlOpenApi}/v3/${option.chain}/swap_quote`, option, ReqSwapVo)
   }
 
   @setChainId
-  public getTokenList(option: ReqBase) {
-    return get(`${this.UrlOpenApi}/v1/cross/tokenList`, option, ReqBase)
+  public getTokenList(option: ChainName) {
+    return get(`${this.UrlOpenApi}/v1/cross/tokenList`, option, ChainName)
   }
 
-  public createWallet(option: ReqBase) {
-    return get(`${this.UrlOpenApi}/v1/cross/createWallet`, option, ReqBase)
+  @setChainId
+  public createWallet(option: ChainName) {
+    return get(`${this.UrlOpenApi}/v1/cross/createWallet`, option, ChainName)
   }
 
   @setChainId

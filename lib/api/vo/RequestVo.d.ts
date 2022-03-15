@@ -23,31 +23,21 @@ export declare class ReqTokenInfoVo {
     contract_address: string;
 }
 export declare class ReqQuoteVo extends ChainName {
-    exChange: string | 'openoceanv2';
     inTokenAddress: string;
     outTokenAddress: string;
     amount: Number;
-    gasPrice: Number;
     slippage: Number;
-    in_token_decimals: Number;
-    out_token_decimals: Number;
-    withRoute: String;
+    gasPrice: String;
 }
 export declare class ReqSwapVo extends ChainName {
-    exChange: string | 'openoceanv2';
     inTokenAddress: string;
     outTokenAddress: string;
     amount: Number;
-    gasPrice: Number;
     slippage: Number;
     account: String;
-    referrer: String;
-    in_token_decimals: Number;
-    out_token_decimals: Number;
-    withoutCheckBalance: Boolean;
+    gasPrice: String;
 }
 export declare class ReqTransactionReceiptVo extends ChainName {
-    exChange: string | 'openoceanv2';
     hash: string;
 }
 export declare class ReqTransactionVo extends ReqTransactionReceiptVo {

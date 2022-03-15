@@ -9,6 +9,7 @@ import { Swap, ReqSwapVo } from "./Swap";
 
 class SwapSdk {
   i: number = 0;
+  chain: any;
   wallet: any;
   constructor() {
     let data = localStorage.getItem('opencean_link_obj')
@@ -23,14 +24,14 @@ class SwapSdk {
         message: 'No linked wallet'
       }
     }
-    if (this.wallet && this.wallet.chain != reqSwapVo.chain) {
+    if (this.wallet && this.chain.key != reqSwapVo.chain) {
       return {
         code: 400,
         message: 'Network error'
       }
     }
     let swap = new Swap(reqSwapVo)
-    swap.send(this.wallet)
+    swap.send(this.wallet,this.chain)
     return swap
   }
   public async approve(reqApproveVo: ReqApproveVo) {
@@ -40,7 +41,7 @@ class SwapSdk {
         message: 'No linked wallet'
       }
     }
-    if (this.wallet && this.wallet.chainId != reqApproveVo.chainId) {
+    if (this.wallet && this.wallet.chain != reqApproveVo.chain) {
       return {
         code: 400,
         message: 'Network error'
@@ -68,10 +69,13 @@ class SwapSdk {
     return approve
   }
   public async connectWallet(reqConnectWalletVo: ReqConnectWalletVo) {
-    if (this.wallet && this.wallet.key == reqConnectWalletVo.walletName && this.wallet.chainName == reqConnectWalletVo.chainName) {
+    if (this.wallet && this.wallet.key == reqConnectWalletVo.walletName && this.wallet.chainName == reqConnectWalletVo.chain) {
       return {
         code: 200,
-        wallet: this.wallet
+        sdk: {
+          wallet: this.wallet,
+          chain: this.chain
+        }
       }
     }
     const errors = await validateReq(reqConnectWalletVo, ReqConnectWalletVo)
@@ -81,8 +85,11 @@ class SwapSdk {
         message: errors
       }
     } else {
-      let data = await ConnectWallet.link(reqConnectWalletVo)
-      if (data.code == 200) this.wallet = data.wallet
+      let data: any = await ConnectWallet.link(reqConnectWalletVo)
+      if (data.code == 200) {
+        this.wallet = data.sdk.wallet
+        this.chain = data.sdk.chain
+      }
       return data
     }
   }
@@ -92,6 +99,14 @@ class SwapSdk {
     if (this.wallet) return this.wallet
     await utils.sleep(1000)
     if (this.wallet) return this.wallet
+    return
+  }
+  public async getChain() {
+    if (this.chain) return this.chain
+    await utils.sleep(1000)
+    if (this.chain) return this.chain
+    await utils.sleep(1000)
+    if (this.chain) return this.chain
     return
   }
 }

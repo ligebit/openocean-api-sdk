@@ -19,7 +19,7 @@
     <button @click="approve()">approve</button>
 
     <div style="color:red;height:40px">{{message}}</div>
-    <div v-if="wallet" style="color:blue">chainId:{{wallet.chainId}} walletName:{{wallet.name}}  address:{{wallet.address}}</div>
+    <div v-if="wallet" style="color:blue">chainId:{{wallet.chainId}} walletName:{{wallet.name}} address:{{wallet.address}}</div>
     <div class="chainBox" v-for="(item,i) in chainList" :key='i' style="">
       <div class="h1">{{item.chainName}} ({{item.key}})</div>
       <div style="padding-left:20px">
@@ -34,7 +34,6 @@
 <script>
 
 import { OpenoceanApiSdk } from '@openocean.finance/api';
-// import { OpenoceanApiSdk } from 'openocean-api-sdk';
 
 const openoceanApiSdk = new OpenoceanApiSdk()
 const { api, swapSdk, config } = openoceanApiSdk
@@ -104,11 +103,11 @@ export default {
     },
     async quote () {
       let req = await api.getGasPrice({
-        chainId: '56',
+        chain: 'bsc',
       })
       api.quote({
         exChange: 'openoceanv2',
-        chainId: '56',
+        chain: 'bsc',
         inTokenAddress: '0x55d398326f99059ff775485246999027b3197955',
         outTokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
         amount: '7',
@@ -124,11 +123,11 @@ export default {
     },
     async swap () {
       let req = await api.getGasPrice({
-        chainId: '56',
+        chainId: 'bsc',
       })
       let swapObj = swapSdk.swap({
         exChange: 'openoceanv2',
-        chainId: '56',
+        chainId: 'bsc',
         // inTokenAddress: '0x55d398326f99059ff775485246999027b3197955',
         // outTokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
         inTokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
@@ -160,14 +159,13 @@ export default {
 
     },
     getBalance () {
-      api.getBalance({
+      let sd = api.getBalance({
         account: '0x9548f567Aa2bf71a6691B634F9808346C804c0D0',
-        chainId: '1',
+        chain: 'BSC',
         inTokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+      }).then((data) => {
+        debugger
       })
-        .then((data) => {
-          debugger
-        })
         .catch((error) => {
           debugger
         });
@@ -175,7 +173,7 @@ export default {
     getAllowance () {
       api.getAllowance({
         account: '0xf8953d8671644348303cfa8Ae408F5d9fb884761',
-        chainId: '56',
+        chain: 'bsc',
         inTokenAddress: '0x9029FdFAe9A03135846381c7cE16595C3554e10A,0x08ba0619b1e7a582e0bce5bbe9843322c954c340',
         contractAddress: '0x6352a56caadC4F1E25CD6c75970Fa768A3304e64'
       })
@@ -216,7 +214,7 @@ export default {
     },
     getGasPrice () {
       api.getGasPrice({
-        chainId: '56',
+        chain: 'bsc',
       })
         .then((data) => {
           debugger
@@ -227,7 +225,7 @@ export default {
     },
     getTokenList () {
       api.getTokenList({
-        chainId: '56',
+        chain: 'BSC',
       })
         .then((data) => {
           debugger
@@ -239,7 +237,7 @@ export default {
     getTransaction () {
       api.getTransaction({
         exChange: 'openoceanv2',
-        chainId: '56',
+        chain: 'BSC',
         hash: '0x98250e03ed1b61d4d2857758fa597511a84225c6229b20a1349382b5541b5461',
         type: 'transfer'
       })
@@ -254,7 +252,7 @@ export default {
 
     createWallet () {
       api.createWallet({
-        chainId: '56',
+        chain: 'BSC',
       })
         .then((data) => {
           debugger
@@ -265,10 +263,10 @@ export default {
     },
     async transfer () {
       let req = await api.getGasPrice({
-        chainId: '56',
+        chain: 'BSC',
       })
       api.transfer({
-        chainId: '56',
+        chain: 'BSC',
         inTokenAddress: '0x9029FdFAe9A03135846381c7cE16595C3554e10A',
         amount: 1,
         gasPrice: req.data.gasPrice,

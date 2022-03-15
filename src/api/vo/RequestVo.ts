@@ -3,17 +3,28 @@ import { MinLength, IsEnum, Length, IsIn, IsNotEmpty, IsBoolean } from 'class-va
 import { Type } from 'class-transformer'
 
 const ChainIds: String[] = ['1', '3', '4', '56', '100', '137', '250', '42161', '43114']
+const ChainNames: String[] = ['bsc', 'eth', 'polygon', 'ftm', 'avax', 'heco', 'okex', 'xdai', 'arbitrum', 'optimism', 'moonriver', 'boba', 'ont', 'tron', 'solana', 'terra']
+
 export class ReqBase {
 
   @IsNotEmpty({ message: 'ChainId addresses cannot be empty' })
-  @IsIn(ChainIds, { message: 'Chain id in(1/56/100/137/250/42161/43114)' })
+  @IsIn(ChainIds, { message: 'Chain id in(31/56/100/137/250/42161/43114)' })
   @Type(() => String)
   public chainId: string
 
 }
 
+export class ChainName {
 
-export class ReqBanlanceVo extends ReqBase {
+  @IsNotEmpty({ message: 'Chain addresses cannot be empty' })
+  @IsIn(ChainNames, { message: `Chain in()` })
+  @Type(() => String)
+  public chain: string
+
+}
+
+
+export class ReqBanlanceVo extends ChainName {
   @IsNotEmpty({ message: 'Account cannot be empty' })
   @Length(30, 60, { message: 'Account length error' })
   @Type(() => String)
@@ -26,7 +37,7 @@ export class ReqBanlanceVo extends ReqBase {
 
 }
 
-export class ReqAllowanceVo extends ReqBase {
+export class ReqAllowanceVo extends ChainName {
 
   @IsNotEmpty({ message: 'Account cannot be empty' })
   @Length(30, 60, { message: 'Account length error' })
@@ -70,7 +81,7 @@ export class ReqTokenInfoVo {
 }
 
 enum ExChanges { 'openoceanv1', 'openoceanv2', '1inch', 'matcha', 'paraswap' }
-export class ReqQuoteVo extends ReqBase {
+export class ReqQuoteVo extends ChainName {
   @IsNotEmpty({ message: 'ExChange cannot be empty' })
   @IsEnum(ExChanges, { message: 'ExChange in(openoceanv1/openoceanv2/1inch/matcha/paraswap)' })
   @Type(() => String)
@@ -106,7 +117,7 @@ export class ReqQuoteVo extends ReqBase {
   public withRoute: String
 
 }
-export class ReqSwapVo extends ReqBase {
+export class ReqSwapVo extends ChainName {
   @IsNotEmpty({ message: 'ExChange cannot be empty' })
   @IsEnum(ExChanges, { message: 'ExChange in(openoceanv1/openoceanv2/1inch/matcha/paraswap)' })
   @Type(() => String)
@@ -152,7 +163,7 @@ export class ReqSwapVo extends ReqBase {
 
 
 enum TransactionType { 'transfer', 'swap' }
-export class ReqTransactionReceiptVo extends ReqBase {
+export class ReqTransactionReceiptVo extends ChainName {
   @IsNotEmpty({ message: 'ExChange cannot be empty' })
   @IsEnum(ExChanges, { message: 'ExChange id in(openoceanv1/openoceanv2/1inch/matcha/paraswap)' })
   @Type(() => String)
@@ -173,7 +184,7 @@ export class ReqTransactionVo extends ReqTransactionReceiptVo {
 
 
 
-export class ReqtransferVo extends ReqBase {
+export class ReqtransferVo extends ChainName {
   @IsNotEmpty({ message: 'In Token address cannot be empty' })
   @Type(() => String)
   public inTokenAddress: string

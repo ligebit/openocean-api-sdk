@@ -254,4 +254,4 @@ export class Chains {
     return this.chainObj[chainName] ? this.chainObj[chainName].nativeCurrency.address === address : false
   }
 }
-export const chains = new Chains()
+export const chains:Chains = new Chains()

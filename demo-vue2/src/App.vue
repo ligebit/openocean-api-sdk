@@ -12,6 +12,20 @@
 
     <button @click="getGasPrice">getGasPrice</button>
     <div>
+      <h2>Ont</h2>
+      <button @click="connectWallet('Cyano','ont')">connectWallet(Cyano)</button>
+      <button @click="connectWallet('OntoMobile','ont')">connectWallet(OntoMobile)</button>
+      
+      <button @click="quoteOnt">quoteOnt</button>
+      <button @click="swapOnt">swapOnt</button>
+    </div>
+    <div>
+      <h2>Terra</h2>
+      <button @click="connectWallet('TerraStation','terra')">connectWallet</button>
+      <button @click="quoteTerra">quoteTerra</button>
+      <button @click="swapTerra">swapTerra</button>
+    </div>
+    <div>
       <h2>Ropsten</h2>
       <button @click="connectWallet('MetaMask','ropsten')">connectWallet ropsten</button>
       <button @click="approve()">approve ropsten</button>
@@ -127,14 +141,14 @@ export default {
       }
 
     },
-    async quoteTron () {
+    async quoteOnt () {
       let req = await api.getGasPrice({
-        chain: 'tron',
+        chain: 'ont',
       })
       api.quote({
-        chain: 'tron',
-        inTokenAddress: 'T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb',
-        outTokenAddress: 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t',
+        chain: 'ont',
+        inTokenAddress: 'uluna',
+        outTokenAddress: 'uusd',
         amount: 1,
         gasPrice: req.data.gasPrice,
         slippage: 1,
@@ -146,10 +160,112 @@ export default {
           debugger
         });
     },
-    async swapTron () {
+    async swapOnt () {
       let req = await api.getGasPrice({
-        chain: 'tron',
+        chain: 'ont',
       })
+      let swapObj = swapSdk.swap({
+        chain: 'ont',
+        inTokenAddress: 'uluna',
+        outTokenAddress: 'uusd',
+        amount: 0.001,
+        slippage: 1,
+        account: 'TPyNMWvKsmyYpuM4NdKiK58DCvDNHQsPWG',
+        gasPrice: req.data.gasPrice,
+      })
+      if (!swapObj.code) {
+        swapObj.on('error', (error) => {
+          debugger
+        })
+          .on('transactionHash', (hash) => {
+            debugger
+          })
+          .on('receipt', (data) => {
+            debugger
+          })
+          .on('success', (data) => {
+            debugger
+          })
+      } else {
+        this.message = swapObj.message
+        debugger
+      }
+
+    },
+    async quoteTerra () {
+      let req = await api.getGasPrice({
+        chain: 'terra',
+      })
+      api.quote({
+        chain: 'terra',
+        inTokenAddress: 'uluna',
+        outTokenAddress: 'uusd',
+        amount: 1,
+        gasPrice: req.data.gasPrice,
+        slippage: 1,
+      })
+        .then((data) => {
+          debugger
+        })
+        .catch((error) => {
+          debugger
+        });
+    },
+    async swapTerra () {
+      let req = await api.getGasPrice({
+        chain: 'terra',
+      })
+      let swapObj = swapSdk.swap({
+        chain: 'terra',
+        inTokenAddress: 'uluna',
+        outTokenAddress: 'uusd',
+        amount: 0.001,
+        slippage: 1,
+        account: 'TPyNMWvKsmyYpuM4NdKiK58DCvDNHQsPWG',
+        gasPrice: req.data.gasPrice,
+      })
+      if (!swapObj.code) {
+        swapObj.on('error', (error) => {
+          debugger
+        })
+          .on('transactionHash', (hash) => {
+            debugger
+          })
+          .on('receipt', (data) => {
+            debugger
+          })
+          .on('success', (data) => {
+            debugger
+          })
+      } else {
+        this.message = swapObj.message
+        debugger
+      }
+
+    },
+    async quoteTron () {
+      // let req = await api.getGasPrice({
+      //   chain: 'tron',
+      // })
+      api.quote({
+        chain: 'tron',
+        inTokenAddress: 'T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb',
+        outTokenAddress: 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t',
+        amount: 1,
+        gasPrice: 5,
+        slippage: 1,
+      })
+        .then((data) => {
+          debugger
+        })
+        .catch((error) => {
+          debugger
+        });
+    },
+    async swapTron () {
+      // let req = await api.getGasPrice({
+      //   chain: 'tron',
+      // })
       let swapObj = swapSdk.swap({
         chain: 'tron',
         inTokenAddress: 'T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb',
@@ -157,7 +273,7 @@ export default {
         amount: 0.001,
         slippage: 1,
         account: 'TPyNMWvKsmyYpuM4NdKiK58DCvDNHQsPWG',
-        gasPrice: req.data.gasPrice,
+        gasPrice: 5,
       })
       if (!swapObj.code) {
         swapObj.on('error', (error) => {
@@ -412,7 +528,7 @@ export default {
 // }
 </script>
 
-<style sty>
+<style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -438,4 +554,5 @@ export default {
 .chainBox .item:hover {
   color: blue;
 }
+
 </style>

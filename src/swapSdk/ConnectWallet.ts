@@ -2,6 +2,10 @@ import { wallets } from "../config/Wallets";
 import { utils } from "../utils";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { chains } from "../config/Chains";
+import { NotoMobile } from "./NotoMobile";
+
+const axios = require('axios');
+
 export class ConnectWallet {
   static setWalletLoacl(reqConnectWalletVo: any) {
     localStorage.setItem('opencean_link_obj', JSON.stringify(reqConnectWalletVo))
@@ -19,35 +23,44 @@ export class ConnectWallet {
     const selectedChain: string = chain.key
 
     try {
+
       if (wallet.type === 'WalletConnect') {
         wallet.infuraId = '2c7c4d86c2c746c89de722551b606119';
         await wallet.requestConnect(chainId)
         // this.connect(wallet);
-      } //else if (wallet.name === 'ONTO Mobile') {
-      // const qrData = await this.$axios.get('ont/login');
-      // const instance = showOntoScan(qrData);
-      // instance.$on("close", (action, account, result) => {
-      //   if (action === 'login' && result === 'success') {
-      //     wallet.address = account;
-      //     this.connect(wallet);
-      //     document.body.removeChild(instance.$el);
-      //   } else {
-      //     document.body.removeChild(instance.$el);
-      //   }
-      // })
-      // } else if (selectedChain === 'terra') {
-      //   const res = await wallet.requestTerraConnect();
-      //   if (res) {
-      //     this.connect(wallet);
-      //   } else {
-      //     const message = {
-      //       'XDEFI Wallet': 'wallet_message_40018',
-      //       'Terra Station': 'wallet_message_40015'
-      //     }[wallet.name];
-      //     showToast(this.$t(message));
-      //   }
-      // } 
-      else if (selectedChain === "solana") {
+      }
+      else if (wallet.name === 'ONTO Mobile') {
+        const qrData = await axios.get('https://ethapi.openocean.finance/v1/ont/login');
+        wallet.qrData = qrData.data
+        const instance = new NotoMobile(qrData.data);
+        instance.$on('close', (action: any, account: any, result: any) => {
+
+        })
+        // const instance = showOntoScan(qrData);
+        // instance.$on("close", (action: any, account: any, result: any) => {
+        //   if (action === 'login' && result === 'success') {
+        //     wallet.address = account;
+        //     // this.connect(wallet);
+        //     // document.body.removeChild(instance.$el);
+        //   } else {
+        //     // document.body.removeChild(instance.$el);
+        //   }
+        // })
+      }
+      else if (selectedChain === 'terra') {
+        if (!wallet.sdk) {
+          const res = await wallet.requestTerraConnect()
+          if (res) {
+            // this.connect(wallet);
+          } else {
+            // const message = {
+            //   'XDEFI Wallet': 'wallet_message_40018',
+            //   'Terra Station': 'wallet_message_40015'
+            // }[wallet.name];
+            // showToast(this.$t(message));
+          }
+        }
+      } else if (selectedChain === "solana") {
         const res = await wallet.requestSolanaConnect();
         wallet.customPublicKey = new PublicKey(res);
         wallet.connection = new Connection(
@@ -86,6 +99,7 @@ export class ConnectWallet {
     } catch (e: any) {
       const { message } = e;
       const { currentProvider, utils: utilsSkd } = wallet.sdk || {};
+
       if (message === "40006" && currentProvider) {
         const params = chains.ethereumChainParams[reqConnectWalletVo.chain];
         if (params) {

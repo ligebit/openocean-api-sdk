@@ -14,5 +14,9 @@ export declare class Swap {
     send(wallet: any, chain: any): Promise<this>;
     sendSolanaTransaction(): Promise<void>;
     sendEthTransaction(): Promise<void>;
+    sendTronTransaction(): Promise<void>;
+    sendTerraTransaction(): Promise<void>;
+    private getTerraFee;
+    private getTerraMsgExecuteContract;
     on(events: string, callback: Function): this;
 }

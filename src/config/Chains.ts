@@ -56,19 +56,34 @@ let chainObj: any = {
     compiler: 'EVM',
     chainName: "Avalanche", chainId: 43114, blockExplorerUrl: "https://cchain.explorer.avax.network/tx/", popularToken: ["OOE", "AVAX", "PNG", "DAI.E", "ETH", "WAVAX", "JOE", "QI", "USDC.E"], nativeCurrency: { name: "AVAX", symbol: "avax", decimals: 18, address: "0x0000000000000000000000000000000000000000" }, rpcUrls: ["https://api.avax.network/ext/bc/C/rpc"]
   },
-  "fantom": { chainName: "Fantom", chainId: 250, blockExplorerUrl: "https://ftmscan.com/tx/", popularToken: ["OOE", "ETH", "USDT", "USDC", "SPIRIT", "1INCH", "C98", "FTM", "fUSDT", "MIM", "BOO"], nativeCurrency: { name: "FTM", symbol: "ftm", decimals: 18, address: "0x0000000000000000000000000000000000000000" }, rpcUrls: ["https://rpcapi.fantom.network"] },
+  "fantom": {
+    compiler: 'EVM',
+    chainName: "Fantom", chainId: 250, blockExplorerUrl: "https://ftmscan.com/tx/", popularToken: ["OOE", "ETH", "USDT", "USDC", "SPIRIT", "1INCH", "C98", "FTM", "fUSDT", "MIM", "BOO"], nativeCurrency: { name: "FTM", symbol: "ftm", decimals: 18, address: "0x0000000000000000000000000000000000000000" }, rpcUrls: ["https://rpcapi.fantom.network"]
+  },
   "arbitrum": {
     compiler: 'EVM',
     chainName: "Arbitrum", chainId: 42161, blockExplorerUrl: "https://arbiscan.io/tx/", nativeCurrency: { name: "ETH", symbol: "eth", decimals: 18, address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE" }, rpcUrls: ["https://arb1.arbitrum.io/rpc"]
   },
-  "terra": { chainName: "Terra Mainnet", chainId: "columbus-5", blockExplorerUrl: "https://finder.terra.money/columbus-5/tx/", rpcUrls: null },
+  "terra": {
+    compiler: 'TERRA',
+    chainName: "Terra Mainnet",  blockExplorerUrl: "https://finder.terra.money/columbus-5/tx/", rpcUrls: null
+  },
   "xdai": {
     compiler: 'EVM',
     chainName: "Gnosis Mainnet", chainId: 100, blockExplorerUrl: "https://blockscout.com/poa/xdai/tx/", popularToken: ["OOE", "ETH", "USDT", "USDC", "BUSD", "1INCH", "C98"], nativeCurrency: { name: "xDai", symbol: "xdai", decimals: 18, address: "0x0000000000000000000000000000000000000000" }, rpcUrls: ["https://rpc.xdaichain.com/"]
   },
-  "boba": { chainName: "Boba Mainnet", chainId: 288, blockExplorerUrl: "https://blockexplorer.boba.network/tx/", nativeCurrency: { name: "ETH", symbol: "eth", decimals: 18, address: "0x0000000000000000000000000000000000000000" }, rpcUrls: ["https://mainnet.boba.network"] },
-  "ont": { chainName: "Ontology Mainnet", blockExplorerUrl: "https://explorer.ont.io/transaction/", popularToken: [], rpcUrls: null },
-  "tron": { chainName: "Tron Mainnet", blockExplorerUrl: "https://tronscan.io/#/transaction/", popularToken: ["TRX", "WTRX", "ETH", "BTC", "USDT", "USDJ", "JST"], rpcUrls: null },
+  "boba": {
+    compiler: 'EVM',
+    chainName: "Boba Mainnet", chainId: 288, blockExplorerUrl: "https://blockexplorer.boba.network/tx/", nativeCurrency: { name: "ETH", symbol: "eth", decimals: 18, address: "0x0000000000000000000000000000000000000000" }, rpcUrls: ["https://mainnet.boba.network"]
+  },
+  "ont": {
+    compiler: 'ONT',
+    chainName: "Ontology Mainnet", blockExplorerUrl: "https://explorer.ont.io/transaction/", popularToken: [], rpcUrls: null
+  },
+  "tron": {
+    compiler: 'TRON',
+    chainName: "Tron Mainnet", blockExplorerUrl: "https://tronscan.io/#/transaction/", popularToken: ["TRX", "WTRX", "ETH", "BTC", "USDT", "USDJ", "JST"], rpcUrls: null
+  },
   "heco": {
     compiler: 'EVM',
     chainName: "Heco Mainnet", chainId: 128, blockExplorerUrl: "https://hecoinfo.com/tx/", popularToken: ["HT", "ETH", "AAVE", "USDT", "USDC", "MDX", "DEP"], nativeCurrency: { name: "HT", symbol: "ht", decimals: 18, address: "0x0000000000000000000000000000000000000000" }, rpcUrls: ["https://http-mainnet-node.huobichain.com"]
@@ -85,8 +100,14 @@ let chainObj: any = {
     compiler: 'EVM',
     chainName: "Harmony", blockExplorerUrl: "https://explorer.harmony.one/", popularToken: ["OOE", "ETH", "USDT", "USDC", "BUSD", "1INCH", "C98"]
   },
-  "dot": { chainName: "Polkadot", blockExplorerUrl: "", popularToken: ["OOE", "ETH", "USDT", "USDC", "BUSD", "1INCH", "C98"] },
-  "neo": { chainName: "Neo", blockExplorerUrl: "", popularToken: ["OOE", "ETH", "USDT", "USDC", "BUSD", "1INCH", "C98"] }
+  "dot": {
+    compiler: 'EVM',
+    chainName: "Polkadot", blockExplorerUrl: "", popularToken: ["OOE", "ETH", "USDT", "USDC", "BUSD", "1INCH", "C98"]
+  },
+  "neo": {
+    compiler: 'EVM',
+    chainName: "Neo", blockExplorerUrl: "", popularToken: ["OOE", "ETH", "USDT", "USDC", "BUSD", "1INCH", "C98"]
+  }
 }
 
 export class Chains {

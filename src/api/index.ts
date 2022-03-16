@@ -80,7 +80,7 @@ function setChainId(target: any, method: string, descriptor: PropertyDescriptor)
       if (item && item.chain) {
         item.chain = item.chain.toLowerCase()
         if (config.chains.chainObj[item.chain] && config.chains.chainObj[item.chain].chainId) {
-          item.chainId = (config.chains.chainObj[item.chain].chainId + '')
+          item.chainId = config.chains.chainObj[item.chain].chainId + ''
         }
       }
       return item

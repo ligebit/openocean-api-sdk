@@ -2,6 +2,8 @@ import { api } from "../api";
 import { ReqSwapVo } from "../api/vo/RequestVo";
 import { chains } from "../config/Chains";
 import { Transaction } from "@solana/web3.js";
+import { LCDClient, MsgExecuteContract } from "@terra-money/terra.js";
+
 const axios = require('axios');
 const bs58 = require("bs58");
 
@@ -36,8 +38,11 @@ export class Swap {
       case 'SOL':
         this.sendSolanaTransaction()
         break
-      case 'SOL':
+      case 'TRON':
         this.sendTronTransaction()
+        break
+      case 'TERRA':
+        this.sendTerraTransaction()
         break
     }
     return this
@@ -161,7 +166,6 @@ export class Swap {
     } = this.res;
     // const { abi, contract } = res2;
     let data: any = await axios.get(`https://ethapi.openocean.finance/v1/tron/exchange`);
-    debugger
     const _contract = await this.wallet.contract(data.abi, data.contract);
     let swapParams: any = {
       feeLimit: 300000000,
@@ -193,6 +197,118 @@ export class Swap {
         });
     } catch (e: any) {
       this.errorCallback(e || e.message)
+    }
+  }
+
+  async sendTerraTransaction() {
+
+    try {
+      let res2 = {}
+      const address = '0x0000000000000000000000000000000000000000'; //state.default_account;
+      const gasPrices = await axios.get("https://ethapi.openocean.finance/v1/terra/gas-price", { cache: true });
+      debugger
+      const msg = await this.getTerraMsgExecuteContract(this.res, res2, address, gasPrices);
+      debugger
+      const { fee, accountInfo }: any = await this.getTerraFee(address, msg, gasPrices);
+      debugger
+      await this.wallet.post({
+        msgs: [msg],
+        gasAdjustment: 1.5,
+        waitForConfirmation: true,
+        fee,
+        account_number: accountInfo.account_number,
+        sequence: accountInfo.sequence,
+        purgeQueue: true,
+      });
+
+      this.wallet.on("onPost", (data: any) => {
+        const { result, success } = data || {};
+        if (success) {
+          const { txhash } = result || {};
+          // instance.change({
+          //   status: "success",
+          //   chain: state.walletType,
+          //   address: txhash,
+          // });
+        } else {
+          this.errorCallback('Transaction failed')
+          // instance.change({ status: "fail", text: "Transaction failed" });
+        }
+        // setTimeout(() => {
+        //   reload();
+        // }, 5000);
+      });
+    } catch (e: any) {
+      // console.warn(e);
+      // console.log("Error: " + e.message);
+      // instance.change({ status: "fail", text: e.message || e });
+      this.errorCallback(e.message || e)
+    }
+  }
+
+  private async getTerraFee(address: string, msg: any, gasPrices: any) {
+    try {
+      const terra = new LCDClient({
+        chainID: "columbus-5",
+        URL: "https://lcd.terra.dev",
+        gasPrices,
+        gasAdjustment: 1.75,
+      });
+      const accountInfo: any = await terra.auth.accountInfo(address);
+      const fee = await terra.tx.estimateFee(
+        [
+          {
+            sequenceNumber: accountInfo.sequence,
+            publicKey: accountInfo.public_key,
+          },
+        ],
+        {
+          msgs: [msg],
+          feeDenoms: ["uusd"],
+        }
+      );
+      return {
+        fee,
+        accountInfo,
+      };
+    } catch (e) {
+      return null;
+    }
+  }
+  private getTerraMsgExecuteContract(res: any, res2: any, sender: any, gasPrices: any) {
+    try {
+      const { inToken, inAmount, execute_swap_operations } = res;
+      const { contract } = res2;
+      const { address } = inToken;
+      let msg = null;
+      if (gasPrices[address]) {
+        const coins: any = {};
+        coins[address] = +inAmount;
+        msg = new MsgExecuteContract(
+          sender,
+          contract,
+          {
+            execute_swap_operations,
+          },
+          coins
+        );
+      } else {
+        msg = new MsgExecuteContract(
+          sender,
+          address,
+          {
+            send: {
+              contract,
+              amount: inAmount,
+              msg: btoa(JSON.stringify({ execute_swap_operations })),
+            },
+          },
+          []
+        );
+      }
+      return msg;
+    } catch (e) {
+      return null;
     }
   }
 

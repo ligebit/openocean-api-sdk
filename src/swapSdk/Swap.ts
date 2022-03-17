@@ -219,7 +219,7 @@ export class Swap {
       const gasPrices = await axios.get("https://ethapi.openocean.finance/v1/terra/gas-price", { cache: true });
       const msg = await this.getTerraMsgExecuteContract(this.res, data, address, gasPrices.data);
       const { fee, accountInfo }: any = await this.getTerraFee(address, msg, gasPrices.data);
-      await this.wallet.post({
+      await this.wallet.sdk.post({
         msgs: [msg],
         gasAdjustment: 1.5,
         waitForConfirmation: true,
@@ -228,7 +228,7 @@ export class Swap {
         sequence: accountInfo.sequence,
         purgeQueue: true,
       });
-      this.wallet.on("onPost", (data: any) => {
+      this.wallet.sdk.on("onPost", (data: any) => {
         const { result, success } = data || {};
         if (success) {
           const { txhash } = result || {};
@@ -238,6 +238,7 @@ export class Swap {
         }
       });
     } catch (e: any) {
+      debugger
       this.errorCallback(e.message || e)
     }
   }
@@ -349,10 +350,16 @@ export class Swap {
   }
   private getTerraMsgExecuteContract(res: any, res2: any, sender: any, gasPrices: any) {
     try {
-      const { inToken, inAmount, execute_swap_operations } = res;
+      const { inToken, inAmount, data } = res;
+      let dataObj:any = data.msgs.map((item: any) => {
+        return JSON.parse(item)
+      })
+      let execute_swap_operations=dataObj[0].execute_msg.execute_swap_operations
+      
       const { contract } = res2;
       const { address } = inToken;
       let msg = null;
+      
       if (gasPrices[address]) {
         const coins: any = {};
         coins[address] = +inAmount;

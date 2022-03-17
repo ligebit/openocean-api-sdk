@@ -198,8 +198,8 @@ export default {
       })
       api.quote({
         chain: 'terra',
-        inTokenAddress: 'uluna',
-        outTokenAddress: 'uusd',
+        inTokenAddress: 'uusd',
+        outTokenAddress: 'terra13awdgcx40tz5uygkgm79dytez3x87rpg4uhnvu',
         amount: 1,
         gasPrice: req.data.gasPrice,
         slippage: 1,
@@ -217,9 +217,9 @@ export default {
       })
       let swapObj = swapSdk.swap({
         chain: 'terra',
-        inTokenAddress: 'uluna',
-        outTokenAddress: 'uusd',
-        amount: 0.001,
+        inTokenAddress: 'uusd',
+        outTokenAddress: 'terra13awdgcx40tz5uygkgm79dytez3x87rpg4uhnvu',
+        amount: 0.01,
         slippage: 1,
         account: this.wallet.address,
         gasPrice: req.data.gasPrice,
@@ -270,7 +270,7 @@ export default {
         chain: 'tron',
         inTokenAddress: 'T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb',
         outTokenAddress: 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t',
-        amount: 0.001,
+        amount: 1,
         slippage: 1,
         account: this.wallet.address,
         gasPrice: 5,

@@ -1006,13 +1006,16 @@
 
 "@openocean.finance/api@file:..":
   "resolved" "file:.."
-  "version" "0.0.1"
+  "version" "0.0.2"
   dependencies:
+    "@ont-dev/ontology-dapi" "^0.5.4"
     "@openocean.finance/wallet" "^0.2.3"
     "@solana/web3.js" "1.31.0"
+    "@terra-money/terra.js" "^3.0.1"
     "bs58" "^4.0.1"
     "class-transformer" "^0.5.1"
     "class-validator" "^0.13.2"
+    "ontology-ts-sdk" "^1.1.16"
     "reflect-metadata" "^0.1.13"
     "web3" "^1.7.1"
 

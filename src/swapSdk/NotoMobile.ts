@@ -71,7 +71,6 @@ export class NotoMobile {
     #qrcodeBox #close8 >div:after{transform: rotate(-45deg);}
     #qrcodeBox #qrcode img{ display:inline-block;}
     `
-    // style.sheet.addRule('.red:before','background-color:green');
   }
   createQrcode(w: number) {
     if (!document.getElementById("qrcode")) {
@@ -153,7 +152,7 @@ export class NotoMobile {
           </div>
         </div>
         <div id="qrcodeb" style="padding-top:${headHeight1}px;position:relative;height:100%;width:100%;background:#fff;text-align: center;">
-          <div style="position:absolute;top:0;left:0;width:100%;font-size:${width > 300 ? 14 : 12}px;color:rgba(60,66,82,.6);line-height: ${headHeight1 + padding}px;">Scan QR code with a Onto wallet</div>
+          <div style="position:absolute;top:0;left:0;width:100%;font-size:${width > 400 ? 18 : 14}px;color:rgba(60,66,82,.6);line-height: ${headHeight1 + padding}px;">Scan QR code with a Onto wallet</div>
           <div style="display: flex;justify-content: center;align-items: center;height:100%;height:100%;">
             <div id="qrcode"></div>
           </div>
@@ -167,7 +166,6 @@ export class NotoMobile {
 
     this.createQrcode(qrcodeWidth)
 
-    //        close做一个点击事件,关闭mask 和 qrcodeBox
     let close: any = window.document.getElementById("close8")
     close.onclick = () => {
       this.cancel()

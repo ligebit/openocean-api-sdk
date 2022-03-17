@@ -3,6 +3,9 @@ import { ReqSwapVo } from "../api/vo/RequestVo";
 import { chains } from "../config/Chains";
 import { Transaction } from "@solana/web3.js";
 import { LCDClient, MsgExecuteContract } from "@terra-money/terra.js";
+import { utils } from "ontology-ts-sdk";
+import { client, ParameterType } from "@ont-dev/ontology-dapi";
+import { NotoMobile } from "./NotoMobile";
 
 const axios = require('axios');
 const bs58 = require("bs58");
@@ -44,8 +47,34 @@ export class Swap {
       case 'TERRA':
         this.sendTerraTransaction()
         break
+      case 'ONT':
+        this.sendONTTransaction()
+        break
     }
     return this
+  }
+
+  async sendONTTransaction() {
+    const { approve, swap, transaction, _amount, symbol, inToken } = this.res;
+    if (this.wallet.key === "OntoMobile") {
+      const instance = new NotoMobile(approve ? approve : swap);
+      let account = await new Promise((r, q) => {
+        instance.$on('close', (result: any, action: any, account: any) => {
+          if (action === 'login' && result === 'success') {
+            r(account)
+          } else {
+            q(action)
+          }
+        })
+      })
+      this.transactionHashCallback(account)
+    } else {
+      if (approve) {
+        this.approveOnt(transaction, _amount, inToken);
+      } else {
+        this.sendOntTransaction(transaction);
+      }
+    }
   }
   async sendSolanaTransaction() {
 
@@ -82,24 +111,6 @@ export class Swap {
       );
       // this.receiptCallback(signature)
       this.transactionHashCallback(signature)
-
-      // transactions.add(state.walletType, signature, res);
-      // setTimeout(async () => {
-      //   try {
-      //     await axios.post(
-      //       `https://market-api.openocean.finance/v1/data/scan_solana`,
-      //       {
-      //         // from: res.fromIds,
-      //         from: this.wallet.address,
-      //         hash: signature,
-      //       }
-      //     );
-      //     this.successCallback(signature)
-      //   } catch (e) {
-      //     console.log("", e);
-      //     this.errorCallback(e)
-      //   }
-      // }, 3000);
     } catch (e: any) {
       this.errorCallback(e.message)
     }
@@ -165,8 +176,8 @@ export class Swap {
       gasLimitsAndValues,
     } = this.res;
     // const { abi, contract } = res2;
-    let data: any = await axios.get(`https://ethapi.openocean.finance/v1/tron/exchange`);
-    const _contract = await this.wallet.contract(data.abi, data.contract);
+    let { data }: any = await axios.get(`https://ethapi.openocean.finance/v1/tron/exchange`);
+    const _contract = await this.wallet.sdk.contract(data.abi, data.contract);
     let swapParams: any = {
       feeLimit: 300000000,
     };
@@ -203,14 +214,11 @@ export class Swap {
   async sendTerraTransaction() {
 
     try {
-      let res2 = {}
-      const address = '0x0000000000000000000000000000000000000000'; //state.default_account;
+      let { data }: any = await axios.get(`https://ethapi.openocean.finance/v1/terra/exchange`);
+      const address = this.wallet.address; //state.default_account;
       const gasPrices = await axios.get("https://ethapi.openocean.finance/v1/terra/gas-price", { cache: true });
-      debugger
-      const msg = await this.getTerraMsgExecuteContract(this.res, res2, address, gasPrices);
-      debugger
-      const { fee, accountInfo }: any = await this.getTerraFee(address, msg, gasPrices);
-      debugger
+      const msg = await this.getTerraMsgExecuteContract(this.res, data, address, gasPrices.data);
+      const { fee, accountInfo }: any = await this.getTerraFee(address, msg, gasPrices.data);
       await this.wallet.post({
         msgs: [msg],
         gasAdjustment: 1.5,
@@ -220,29 +228,93 @@ export class Swap {
         sequence: accountInfo.sequence,
         purgeQueue: true,
       });
-
       this.wallet.on("onPost", (data: any) => {
         const { result, success } = data || {};
         if (success) {
           const { txhash } = result || {};
-          // instance.change({
-          //   status: "success",
-          //   chain: state.walletType,
-          //   address: txhash,
-          // });
+          this.transactionHashCallback(txhash)
         } else {
           this.errorCallback('Transaction failed')
-          // instance.change({ status: "fail", text: "Transaction failed" });
         }
-        // setTimeout(() => {
-        //   reload();
-        // }, 5000);
       });
     } catch (e: any) {
-      // console.warn(e);
-      // console.log("Error: " + e.message);
-      // instance.change({ status: "fail", text: e.message || e });
       this.errorCallback(e.message || e)
+    }
+  }
+
+  private async approveOnt(transaction: any, _amount: any, inToken: string) {
+
+    try {
+      const { scriptHash, operation, gasLimit, args } = transaction;
+      const params: any = {
+        contract: inToken,
+        operation: "approve",
+        args: [
+          {
+            type: "Address",
+            value: this.wallet.address,
+          },
+          {
+            type: "ByteArray",
+            value: utils.reverseHex(scriptHash),
+          },
+          {
+            type: "ByteArray",
+            value: utils.bigIntToBytes(_amount + ""),
+          },
+        ],
+        gasPrice: 2500,
+        gasLimit: 40000,
+      };
+      const result = await client.api.smartContract.invoke(params);
+      console.log("approveOnt params, result", params, result);
+      this.sendOntTransaction(transaction);
+    } catch (e: any) {
+      // tslint:disable-next-line:no-console
+      console.log("onScCall error:", e);
+      this.errorCallback((e && e.message) || e)
+    }
+  }
+  private async sendOntTransaction(transaction: any) {
+
+    try {
+      const { scriptHash, operation, gasLimit, args } = transaction;
+      const params = {
+        scriptHash,
+        operation,
+        args: args.map((item: any) => {
+          const { type } = item;
+          if (["Long", "Integer"].indexOf(type) >= 0) {
+            item.value = Number(item.value);
+          }
+          return item;
+        }),
+        gasPrice: 2500,
+        gasLimit: 60000,
+        requireIdentity: false,
+      };
+      console.log("sendOntTransaction params", params);
+      const result = await client.api.smartContract.invoke(params);
+      // tslint:disable-next-line:no-console
+      console.log("onScCall finished, result:" + JSON.stringify(result));
+      if (result && result.transaction) {
+        this.successCallback({
+          status: "success",
+          title: "progress_transactions_submitted",
+          // chain: this.walletType,
+          address: result.transaction,
+        })
+      } else {
+        this.successCallback({
+          status: "success",
+          title: "progress_transactions_submitted",
+          text: "progress_transactions_swap_tips2",
+        })
+      }
+    } catch (e: any) {
+      // tslint:disable-next-line:no-console
+      console.log("onScCall error:", e);
+      this.errorCallback((e && e.message) || e)
     }
   }
 

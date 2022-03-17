@@ -12,10 +12,13 @@ export declare class Swap {
     chain: any;
     constructor(option: ReqSwapVo);
     send(wallet: any, chain: any): Promise<this>;
+    sendONTTransaction(): Promise<void>;
     sendSolanaTransaction(): Promise<void>;
     sendEthTransaction(): Promise<void>;
     sendTronTransaction(): Promise<void>;
     sendTerraTransaction(): Promise<void>;
+    private approveOnt;
+    private sendOntTransaction;
     private getTerraFee;
     private getTerraMsgExecuteContract;
     on(events: string, callback: Function): this;

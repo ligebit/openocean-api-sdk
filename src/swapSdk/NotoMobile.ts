@@ -2,21 +2,92 @@
 
 let { QRCode } = require("./qrcode");
 // import { QRCode } from "./qrcode";
+const axios = require('axios');
 
 export class NotoMobile {
-  error: Function
+  close: Function
   $on(key: string, callBack: Function) {
-    if (key == 'error') this.error = callBack
+    if (key == 'close') this.close = callBack
   }
+  mask: any
+  qrcodeBox: any
+
   id: string
   qrCode: string
+  width: number
+
+  time: number = 0
+  outTime: any
 
   constructor(qrData: any) {
     const { id, qrCode } = qrData
     this.id = id
-    this.qrCode = qrCode
-
+    this.qrCode = JSON.stringify(qrCode)
+    this.setCloseStyle()
     this.show()
+  }
+  loop() {
+    axios.get('https://ethapi.openocean.finance/v1/ont/qrcode/result/' + this.id).then((res: any) => {
+      const { action, state, account } = res.data;
+      if (state === '0') {
+        this.close('success', action, account,)
+        this.cancel()
+      }
+      // else if (state === '1') {
+      //   this.close('error', action, account)
+      //   this.cancel()
+      // } 
+      else {
+        this.time++
+        if (this.time > 120) {
+          this.close('error', 'over time')
+          this.cancel()
+          return
+        }
+        this.outTime = setTimeout(() => {
+          this.loop();
+        }, 1000);
+      }
+    }).catch((e: any) => {
+      console.log(e);
+      this.close('error', e)
+      this.cancel()
+    });
+  }
+  setCloseStyle() {
+    let k = document.getElementById('qrcodeStyle09')
+    if (k) return
+    let style: any = document.createElement('style');
+    style.type = "text/css";
+    style.id = 'qrcodeStyle09'
+    document.head.appendChild(style);
+    style.innerHTML = `
+    #qrcodeBox div,#qrcodeBox span{box-sizing: border-box;}
+    #qrcodeBox #close8 :hover{cursor:pointer;opacity:0.5;}
+    #qrcodeBox #close8 >div:before,#qrcodeBox #close8 >div:after{
+      content: '';position: absolute;height: 2px;width: 100%;top: 50%;left: 0;margin-top: -1px;background: #000;border-radius:5px;
+    }
+    #qrcodeBox #close8 >div:before{transform: rotate(45deg);}
+    #qrcodeBox #close8 >div:after{transform: rotate(-45deg);}
+    #qrcodeBox #qrcode img{ display:inline-block;}
+    `
+    // style.sheet.addRule('.red:before','background-color:green');
+  }
+  createQrcode(w: number) {
+    if (!document.getElementById("qrcode")) {
+      setTimeout(() => {
+        this.createQrcode(w)
+      }, 100);
+    }
+    let qrcode = new QRCode(document.getElementById("qrcode"), {
+      text: this.qrCode,
+      width: w,
+      height: w,
+      colorDark: "#000000",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+    this.loop();
   }
   show() {
     // 获取整个页面的宽和高
@@ -26,125 +97,91 @@ export class NotoMobile {
     // 获取浏览器的宽和高
     let b_width = document.documentElement.clientWidth;
     let b_height = document.documentElement.clientHeight;
-    let width = b_width
-    if (width > b_height) width = b_height
-    // width = width * 0.9
 
-    let mask = document.createElement("div");
-    mask.id = "mask";
-    mask.style.width = page_width + "px";
-    mask.style.height = page_height + "px";
-    mask.style.position = 'absolute'
-    mask.style.background = 'rgba(37,41,46,.95)'
-    mask.style.zIndex = '999'
-    mask.style.top = '0'
-    mask.style.left = '0'
+    this.mask = document.createElement("div");
+    this.mask.id = "mask";
+    this.mask.style.width = page_width + "px";
+    this.mask.style.height = page_height + "px";
+    this.mask.style.position = 'absolute'
+    this.mask.style.background = 'rgba(37,41,46,.95)'
+    this.mask.style.zIndex = '999'
+    this.mask.style.top = '0'
+    this.mask.style.left = '0'
+    document.body.appendChild(this.mask);
 
 
+    let width = 0
+    let height = 0
+    let headHeight = 60
+    let headHeight1 = 50
+    let qrcodeWidth = 0
+    let padding = 50
+    // pc
+    if (b_width > b_height) {
+      height = b_height
+      width = b_height - headHeight1 - headHeight - headHeight / 2
+      qrcodeWidth = width - padding * 2
+    } else {
+      // phone
+      padding = 30
+      headHeight = 50
+      headHeight1 = 50
+      width = b_width - 60
+      height = width + headHeight1 + headHeight + headHeight / 2
+      qrcodeWidth = width - padding * 2
+    }
 
-    document.body.appendChild(mask);
+    this.qrcodeBox = document.createElement("div");
+    this.qrcodeBox.id = "qrcodeBox";
+    this.qrcodeBox.style.left = (b_width - width) / 2 + "px";
+    this.qrcodeBox.style.top = (b_height - height) / 2 + "px";
+    this.qrcodeBox.style.height = height + "px";
+    this.qrcodeBox.style.width = width + "px";
 
-    let qrcodeBox = document.createElement("div");
-    qrcodeBox.id = "qrcodeBox";
-    qrcodeBox.style.left = (b_width - width) / 2 + "px";
-    qrcodeBox.style.top = (b_height - width) / 2 + "px";
-    // qrcodeBox.style.width = '300px'
-    // qrcodeBox.style.height = '300px'
-    // qrcodeBox.style.background = '#ffffff'
-    qrcodeBox.style.position = 'absolute'
-    qrcodeBox.style.zIndex = '10000'
-    qrcodeBox.style.padding = '0 30px 0 30px'
+    this.qrcodeBox.style.position = 'absolute'
+    this.qrcodeBox.style.zIndex = '10000'
+    // qrcodeBox.style.padding = '0 30px 0 30px'
 
 
-    qrcodeBox.innerHTML =
-      `<div style="font-size: 22px;">
-        <div style="color:#ffffff;line-height: 60px;">Onto Mobile</div>
-        <div id ="close" style=""></div>
-        <div id="qrcodeb" style="background:#fff;text-align: center;">
-          <div style="color:rgba(60,66,82,.6);line-height: 80px;">Scan QR code with a Onto wallet</div>
-          <div id="qrcode"></div>
+    this.qrcodeBox.innerHTML =
+      `<div style="font-size: 22px;height:100%;padding-top:${headHeight}px;padding-bottom:${headHeight / 2}px;position:relative;">
+        <div style="color:#ffffff;line-height: ${headHeight}px;position:absolute;top:0;left:0;width:100%">
+          <img style="vertical-align: middle; width: 30px;height:30px" src="https://cloudstorage.openocean.finance/openocean/img/icon-onto-white.b4f61a37.svg"/>
+          <span style="vertical-align: middle;">Onto Mobile</span>
+          <div id="close8" style="margin-top: 20px;position: relative;float: right;background: #fff;border-radius: 100px;width:25px;height:25px;padding:5px;display: inline-block;">
+             <div style="position: relative;width:100%;height:100%;display: block;"></div>
+          </div>
+        </div>
+        <div id="qrcodeb" style="padding-top:${headHeight1}px;position:relative;height:100%;width:100%;background:#fff;text-align: center;">
+          <div style="position:absolute;top:0;left:0;width:100%;font-size:${width > 300 ? 14 : 12}px;color:rgba(60,66,82,.6);line-height: ${headHeight1 + padding}px;">Scan QR code with a Onto wallet</div>
+          <div style="display: flex;justify-content: center;align-items: center;height:100%;height:100%;">
+            <div id="qrcode"></div>
+          </div>
         </div>
       </div>
       `
-    document.body.appendChild(qrcodeBox);
+    document.body.appendChild(this.qrcodeBox);
     let qrcodeb: any = document.getElementById("qrcodeb");
-    qrcodeb.style.width = (width - 100) + 'px'
-    qrcodeb.style.height = (width - 70) + 'px'
-    qrcodeb.style.padding = "0 50px 0 50px"
     qrcodeb.style.borderRadius = "20px"
     qrcodeb.style.boxSizing = 'border-box'
 
-
-    setTimeout(() => {
-      let qrcode = new QRCode(document.getElementById("qrcode"), {
-        text: this.qrCode,
-        width: width - 90 - 100,
-        height: width - 90 - 100,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H
-      });
-    }, 1000);
+    this.createQrcode(qrcodeWidth)
 
     //        close做一个点击事件,关闭mask 和 qrcodeBox
-    let close: any = window.document.getElementById("close")
-    close.onclick = function () {
-      document.body.removeChild(mask);
-      document.body.removeChild(qrcodeBox);
+    let close: any = window.document.getElementById("close8")
+    close.onclick = () => {
+      this.cancel()
     }
 
-    mask.onclick = function () {
-      document.body.removeChild(mask);
-      document.body.removeChild(qrcodeBox);
+    this.mask.onclick = () => {
+      this.cancel()
     }
+  }
+  cancel() {
+    this.time = 0
+    this.outTime ? clearTimeout(this.outTime) : ''
+    document.body.removeChild(this.mask);
+    document.body.removeChild(this.qrcodeBox);
 
   }
 }
-
-
-
-// <!DOCTYPE html>
-// <html>
-//     <head>
-//         <meta charset="UTF-8">
-//         <title></title>
-//         <style type="text/css">
-//             *{
-//                 margin: 0px;
-//                 padding: 0px;
-//             }
-
-//             #mask{
-                // background-color: black;
-                // opacity: 0.3;
-                // position: absolute;
-                // top: 0px;
-                // left: 0px;
-                // z-index: 10;
-//             }
-//             #qrcodeBox{
-//                 width: 400px;
-//                 height: 300px;
-//                 background-color: blueviolet;
-//                 position: absolute;
-//                 z-index: 888;
-//                 left: 200px;
-//                 top: 250px;
-
-//             }
-//             #close{
-//                 width: 50px;
-//                 height: 50px;
-//                 background-color: red;
-//                 position: absolute;
-//                 top: 5px;
-//                 right: 5px;
-//                 z-index: 999;
-//             }
-//             #close:hover{
-//                 cursor: pointer;
-//             }
-//         </style>
-
-//     </head>
-

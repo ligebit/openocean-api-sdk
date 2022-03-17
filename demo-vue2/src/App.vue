@@ -15,7 +15,7 @@
       <h2>Ont</h2>
       <button @click="connectWallet('Cyano','ont')">connectWallet(Cyano)</button>
       <button @click="connectWallet('OntoMobile','ont')">connectWallet(OntoMobile)</button>
-      
+
       <button @click="quoteOnt">quoteOnt</button>
       <button @click="swapOnt">swapOnt</button>
     </div>
@@ -147,8 +147,8 @@ export default {
       })
       api.quote({
         chain: 'ont',
-        inTokenAddress: 'uluna',
-        outTokenAddress: 'uusd',
+        inTokenAddress: '00c59fcd27a562d6397883eab1f2fff56e58ef80',
+        outTokenAddress: '33ae7eae016193ba0fe238b223623bc78faac158',
         amount: 1,
         gasPrice: req.data.gasPrice,
         slippage: 1,
@@ -161,17 +161,17 @@ export default {
         });
     },
     async swapOnt () {
-      let req = await api.getGasPrice({
-        chain: 'ont',
-      })
+      // let req = await api.getGasPrice({
+      //   chain: 'ont',
+      // })
       let swapObj = swapSdk.swap({
         chain: 'ont',
-        inTokenAddress: 'uluna',
-        outTokenAddress: 'uusd',
-        amount: 0.001,
+        inTokenAddress: '00c59fcd27a562d6397883eab1f2fff56e58ef80',
+        outTokenAddress: '33ae7eae016193ba0fe238b223623bc78faac158',
+        amount: 1,
         slippage: 1,
-        account: 'TPyNMWvKsmyYpuM4NdKiK58DCvDNHQsPWG',
-        gasPrice: req.data.gasPrice,
+        account: this.wallet.address,
+        gasPrice: 5
       })
       if (!swapObj.code) {
         swapObj.on('error', (error) => {
@@ -221,7 +221,7 @@ export default {
         outTokenAddress: 'uusd',
         amount: 0.001,
         slippage: 1,
-        account: 'TPyNMWvKsmyYpuM4NdKiK58DCvDNHQsPWG',
+        account: this.wallet.address,
         gasPrice: req.data.gasPrice,
       })
       if (!swapObj.code) {
@@ -272,7 +272,7 @@ export default {
         outTokenAddress: 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t',
         amount: 0.001,
         slippage: 1,
-        account: 'TPyNMWvKsmyYpuM4NdKiK58DCvDNHQsPWG',
+        account: this.wallet.address,
         gasPrice: 5,
       })
       if (!swapObj.code) {
@@ -554,5 +554,4 @@ export default {
 .chainBox .item:hover {
   color: blue;
 }
-
 </style>

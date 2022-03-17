@@ -29,23 +29,20 @@ export class ConnectWallet {
         await wallet.requestConnect(chainId)
         // this.connect(wallet);
       }
-      else if (wallet.name === 'ONTO Mobile') {
+      else if (wallet.key === 'OntoMobile') {
         const qrData = await axios.get('https://ethapi.openocean.finance/v1/ont/login');
         wallet.qrData = qrData.data
         const instance = new NotoMobile(qrData.data);
-        instance.$on('close', (action: any, account: any, result: any) => {
-
+        let account = await new Promise((r, q) => {
+          instance.$on('close', (result: any, action: any, account: any) => {
+            if (action === 'login' && result === 'success') {
+              r(account)
+            } else {
+              q(action)
+            }
+          })
         })
-        // const instance = showOntoScan(qrData);
-        // instance.$on("close", (action: any, account: any, result: any) => {
-        //   if (action === 'login' && result === 'success') {
-        //     wallet.address = account;
-        //     // this.connect(wallet);
-        //     // document.body.removeChild(instance.$el);
-        //   } else {
-        //     // document.body.removeChild(instance.$el);
-        //   }
-        // })
+        wallet.address = account;
       }
       else if (selectedChain === 'terra') {
         if (!wallet.sdk) {

@@ -6,10 +6,8 @@ declare class SwapSdk {
     chain: any;
     wallet: any;
     constructor();
-    swap(reqSwapVo: ReqSwapVo): Swap | {
-        code: number;
-        message: string;
-    };
+    swapQuote(reqSwapVo: ReqSwapVo): Promise<any>;
+    swap(swapData: any): Swap;
     approve(reqApproveVo: ReqApproveVo): Promise<Approve | {
         code: number;
         message: string;

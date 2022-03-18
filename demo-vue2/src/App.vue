@@ -164,19 +164,20 @@ export default {
       // let req = await api.getGasPrice({
       //   chain: 'ont',
       // })
-      let swapObj = swapSdk.swap({
+      let swapData = await swapSdk.swapQuote({
         chain: 'ont',
         inTokenAddress: '00c59fcd27a562d6397883eab1f2fff56e58ef80',
         outTokenAddress: '33ae7eae016193ba0fe238b223623bc78faac158',
-        amount: 1,
+        amount: 0.01,
         slippage: 1,
         account: this.wallet.address,
         gasPrice: 5
       })
-      if (!swapObj.code) {
-        swapObj.on('error', (error) => {
-          debugger
-        })
+      if (swapData.code == 200) {
+        swapSdk.swap(swapData.data)
+          .on('error', (error) => {
+            debugger
+          })
           .on('transactionHash', (hash) => {
             debugger
           })
@@ -186,8 +187,10 @@ export default {
           .on('success', (data) => {
             debugger
           })
+        // swap.send()
+
       } else {
-        this.message = swapObj.message
+        this.message = swapData.message
         debugger
       }
 
@@ -215,7 +218,7 @@ export default {
       let req = await api.getGasPrice({
         chain: 'terra',
       })
-      let swapObj = swapSdk.swap({
+      let swapData = await swapSdk.swapQuote({
         chain: 'terra',
         inTokenAddress: 'uusd',
         outTokenAddress: 'terra13awdgcx40tz5uygkgm79dytez3x87rpg4uhnvu',
@@ -224,10 +227,11 @@ export default {
         account: this.wallet.address,
         gasPrice: req.data.gasPrice,
       })
-      if (!swapObj.code) {
-        swapObj.on('error', (error) => {
-          debugger
-        })
+      if (swapData.code == 200) {
+        swapSdk.swap(swapData.data)
+          .on('error', (error) => {
+            debugger
+          })
           .on('transactionHash', (hash) => {
             debugger
           })
@@ -238,7 +242,7 @@ export default {
             debugger
           })
       } else {
-        this.message = swapObj.message
+        this.message = swapData.message
         debugger
       }
 
@@ -266,7 +270,7 @@ export default {
       // let req = await api.getGasPrice({
       //   chain: 'tron',
       // })
-      let swapObj = swapSdk.swap({
+      let swapData = await swapSdk.swapQuote({
         chain: 'tron',
         inTokenAddress: 'T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb',
         outTokenAddress: 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t',
@@ -275,10 +279,11 @@ export default {
         account: this.wallet.address,
         gasPrice: 5,
       })
-      if (!swapObj.code) {
-        swapObj.on('error', (error) => {
-          debugger
-        })
+      if (swapData.code == 200) {
+        swapSdk.swap(swapData.data)
+          .on('error', (error) => {
+            debugger
+          })
           .on('transactionHash', (hash) => {
             debugger
           })
@@ -289,7 +294,7 @@ export default {
             debugger
           })
       } else {
-        this.message = swapObj.message
+        this.message = swapData.message
         debugger
       }
 
@@ -311,7 +316,7 @@ export default {
         });
     },
     async swapSolana () {
-      let swapObj = swapSdk.swap({
+      let swapData = await swapSdk.swapQuote({
         chain: 'solana',
         inTokenAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
         outTokenAddress: 'So11111111111111111111111111111111111111112',
@@ -320,10 +325,11 @@ export default {
         account: '5LVT5qWEFNxJD1yz3guroQQ6x1LaeU1vdnYn59q5hihW',
         // gasPrice: 7,
       })
-      if (!swapObj.code) {
-        swapObj.on('error', (error) => {
-          debugger
-        })
+      if (swapData.code == 200) {
+        swapSdk.swap(swapData.data)
+          .on('error', (error) => {
+            debugger
+          })
           .on('transactionHash', (hash) => {
             debugger
           })
@@ -334,7 +340,7 @@ export default {
             debugger
           })
       } else {
-        this.message = swapObj.message
+        this.message = swapData.message
         debugger
       }
 
@@ -362,7 +368,7 @@ export default {
       let req = await api.getGasPrice({
         chain: 'bsc',
       })
-      let swapObj = swapSdk.swap({
+      let swapData = await swapSdk.swapQuote({
         chain: 'bsc',
         // inTokenAddress: '0x55d398326f99059ff775485246999027b3197955',
         // outTokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
@@ -375,10 +381,11 @@ export default {
         // in_token_decimals: 18,
         // out_token_decimals: 9,
       })
-      if (!swapObj.code) {
-        swapObj.on('error', (error) => {
-          debugger
-        })
+      if (swapData.code == 200) {
+        swapSdk.swap(swapData.data)
+          .on('error', (error) => {
+            debugger
+          })
           .on('transactionHash', (hash) => {
             debugger
           })
@@ -389,7 +396,7 @@ export default {
             debugger
           })
       } else {
-        this.message = swapObj.message
+        this.message = swapData.message
         debugger
       }
 

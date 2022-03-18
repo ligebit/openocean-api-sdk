@@ -6,35 +6,33 @@ import { LCDClient, MsgExecuteContract } from "@terra-money/terra.js";
 import { utils } from "ontology-ts-sdk";
 import { client, ParameterType } from "@ont-dev/ontology-dapi";
 import { NotoMobile } from "./NotoMobile";
-
 const axios = require('axios');
 const bs58 = require("bs58");
+client.registerClient({});
 
 export { ReqSwapVo }
 export class Swap {
+  private getDataCallback: Function = () => { }
   private errorCallback: Function = () => { }
   private transactionHashCallback: Function = () => { }
   private receiptCallback: Function = () => { }
   private successCallback: Function = () => { }
   contract: any
-  option: ReqSwapVo
   res: any
   wallet: any
   chain: any
 
-  constructor(option: ReqSwapVo) {
-    this.option = option
-  }
-  async send(wallet: any, chain: any) {
+  constructor(res: any, wallet: any, chain: any) {
+    this.res = res
     this.wallet = wallet
     this.chain = chain
-    let data = await api.swap(this.option)
-    if (data.code != 200) {
-      this.errorCallback(data.error)
-      return this
-    }
-    this.res = data.data
-    switch (chain.compiler) {
+    setTimeout(() => {
+      this.send()
+    }, 200);
+  }
+
+  send() {
+    switch (this.chain.compiler) {
       case 'EVM':
         this.sendEthTransaction()
         break
@@ -55,7 +53,7 @@ export class Swap {
   }
 
   async sendONTTransaction() {
-    const { approve, swap, transaction, _amount, symbol, inToken } = this.res;
+    const { approve, swap, transaction, inAmount, inToken } = this.res;
     if (this.wallet.key === "OntoMobile") {
       const instance = new NotoMobile(approve ? approve : swap);
       let account = await new Promise((r, q) => {
@@ -70,9 +68,9 @@ export class Swap {
       this.transactionHashCallback(account)
     } else {
       if (approve) {
-        this.approveOnt(transaction, _amount, inToken);
+        this.approveOnt(transaction, inAmount, inToken);
       } else {
-        this.sendOntTransaction(transaction);
+        this.sendOntTransactionSdk(transaction);
       }
     }
   }
@@ -238,7 +236,6 @@ export class Swap {
         }
       });
     } catch (e: any) {
-      debugger
       this.errorCallback(e.message || e)
     }
   }
@@ -269,14 +266,14 @@ export class Swap {
       };
       const result = await client.api.smartContract.invoke(params);
       console.log("approveOnt params, result", params, result);
-      this.sendOntTransaction(transaction);
+      this.sendOntTransactionSdk(transaction);
     } catch (e: any) {
       // tslint:disable-next-line:no-console
       console.log("onScCall error:", e);
       this.errorCallback((e && e.message) || e)
     }
   }
-  private async sendOntTransaction(transaction: any) {
+  private async sendOntTransactionSdk(transaction: any) {
 
     try {
       const { scriptHash, operation, gasLimit, args } = transaction;
@@ -351,15 +348,15 @@ export class Swap {
   private getTerraMsgExecuteContract(res: any, res2: any, sender: any, gasPrices: any) {
     try {
       const { inToken, inAmount, data } = res;
-      let dataObj:any = data.msgs.map((item: any) => {
+      let dataObj: any = data.msgs.map((item: any) => {
         return JSON.parse(item)
       })
-      let execute_swap_operations=dataObj[0].execute_msg.execute_swap_operations
-      
+      let execute_swap_operations = dataObj[0].execute_msg.execute_swap_operations
+
       const { contract } = res2;
       const { address } = inToken;
       let msg = null;
-      
+
       if (gasPrices[address]) {
         const coins: any = {};
         coins[address] = +inAmount;
@@ -400,7 +397,10 @@ export class Swap {
       this.receiptCallback = callback
     } else if (events === 'success') {
       this.successCallback = callback
+    } else if (events === 'getDataSuccess') {
+      this.getDataCallback = callback
     }
+
     return this
   }
 }

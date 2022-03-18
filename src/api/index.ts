@@ -29,7 +29,7 @@ export class Api {
   }
 
   @setChainId
-  public swap(option: ReqSwapVo) {
+  public swapQuote(option: ReqSwapVo) {
     return get(`${this.UrlOpenApi}/v3/${option.chain}/swap_quote`, option, ReqSwapVo)
   }
 

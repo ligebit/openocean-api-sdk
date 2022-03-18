@@ -6,6 +6,7 @@ import { ConnectWallet } from "./ConnectWallet";
 import { Approve } from "./Approve";
 import { ERC20_abi } from "../config";
 import { Swap, ReqSwapVo } from "./Swap";
+import { api } from "../api";
 
 class SwapSdk {
   i: number = 0;
@@ -17,7 +18,7 @@ class SwapSdk {
       this.connectWallet(JSON.parse(data))
     }
   }
-  public swap(reqSwapVo: ReqSwapVo) {
+  public async swapQuote(reqSwapVo: ReqSwapVo) {
     if (!this.wallet) {
       return {
         code: 400,
@@ -27,13 +28,15 @@ class SwapSdk {
     if (this.wallet && this.chain.key != reqSwapVo.chain) {
       return {
         code: 400,
-        message: 'Network error'
+        message: 'Chain error'
       }
     }
-    let swap = new Swap(reqSwapVo)
-    swap.send(this.wallet,this.chain)
-    return swap
+    return await api.swapQuote(reqSwapVo)
   }
+  public swap(swapData: any) {
+    return new Swap(swapData, this.wallet, this.chain)
+  }
+
   public async approve(reqApproveVo: ReqApproveVo) {
     if (!this.wallet) {
       return {
@@ -93,21 +96,15 @@ class SwapSdk {
       return data
     }
   }
-  public async getWallet() {
+  public async getWallet(): Promise<any> {
     if (this.wallet) return this.wallet
     await utils.sleep(1000)
-    if (this.wallet) return this.wallet
-    await utils.sleep(1000)
-    if (this.wallet) return this.wallet
-    return
+    return this.getWallet()
   }
-  public async getChain() {
+  public async getChain(): Promise<any> {
     if (this.chain) return this.chain
     await utils.sleep(1000)
-    if (this.chain) return this.chain
-    await utils.sleep(1000)
-    if (this.chain) return this.chain
-    return
+    return this.getChain()
   }
 }
 

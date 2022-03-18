@@ -6,7 +6,7 @@ export declare class Api {
     getAllowance(option: ReqAllowanceVo): Promise<any>;
     getGasPrice(option: any): Promise<any>;
     quote(option: ReqQuoteVo): Promise<any>;
-    swap(option: ReqSwapVo): Promise<any>;
+    swapQuote(option: ReqSwapVo): Promise<any>;
     getTokenList(option: ChainName): Promise<any>;
     createWallet(option: ChainName): Promise<any>;
     getTransaction(option: ReqTransactionVo): Promise<any>;

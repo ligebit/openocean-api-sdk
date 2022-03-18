@@ -33,6 +33,7 @@ export class ConnectWallet {
         const qrData = await axios.get('https://ethapi.openocean.finance/v1/ont/login');
         wallet.qrData = qrData.data
         const instance = new NotoMobile(qrData.data);
+        
         let account = await new Promise((r, q) => {
           instance.$on('close', (result: any, action: any, account: any) => {
             if (action === 'login' && result === 'success') {
@@ -42,6 +43,7 @@ export class ConnectWallet {
             }
           })
         })
+        
         wallet.address = account;
       }
       else if (selectedChain === 'terra') {
